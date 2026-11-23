@@ -39,6 +39,30 @@ jobs:
       - run: npm test
       - run: npx ng build --configuration production
 
+  infra:
+    name: Infrastructure · Terraform, Kubernetes, Ansible
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+      - name: Terraform fmt et validate
+        working-directory: terraform/azure
+        run: |
+          terraform fmt -check -recursive
+          terraform init -backend=false
+          terraform validate
+      - name: Manifests Kubernetes (kubeconform)
+        run: |
+          curl -sSL https://github.com/yannh/kubeconform/releases/download/v0.6.7/kubeconform-linux-amd64.tar.gz | tar xz
+          ./kubeconform -strict -summary -ignore-filename-pattern 'kustomization|monitoring' k8s/
+      - name: Ansible (syntaxe et bonnes pratiques)
+        working-directory: ansible
+        run: |
+          pip install ansible ansible-lint
+          cp inventory.example.ini inventory.ini
+          ansible-playbook --syntax-check site.yml
+          ansible-lint --offline site.yml
+
   docker:
     name: Images Docker · scan Trivy · Docker Hub
     needs: [backend, frontend]

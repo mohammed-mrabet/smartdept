@@ -1,0 +1,59 @@
+@startuml scolarite-classes
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+hide empty methods
+class Filiere {
+  code : String
+  studyLevel : StudyLevel
+}
+class Room {
+  code : String
+  capacity : int
+  type : RoomType
+}
+class CourseModule {
+  code : String
+  semester : String
+  coefficient : double
+  cmPerWeek, tdPerWeek, tpPerWeek : int
+}
+class ClassSession {
+  date : LocalDate
+  startTime, endTime : LocalTime
+  type : SessionType
+  status : SessionStatus
+  attendanceTaken : boolean
+}
+class Exam {
+  date : LocalDate
+  startTime, endTime : LocalTime
+  type : ExamType
+  + capacity() : int
+}
+class Grade {
+  assessment : Assessment
+  value : double
+  published : boolean
+}
+class Attendance {
+  status : AttendanceStatus
+  justificationStatus : JustificationStatus
+  justification : String
+}
+class User
+CourseModule "0..*" --> "1" Filiere
+CourseModule "0..*" --> "0..1" User : enseignant
+ClassSession "0..*" --> "1" CourseModule
+ClassSession "0..*" --> "1" Room
+ClassSession "0..*" --> "1" User : enseignant
+ClassSession "0..*" --> "1" Filiere
+Exam "0..*" --> "1" CourseModule
+Exam "0..*" --> "1..*" Room : salles
+Exam "0..*" --> "0..*" User : surveillants
+Grade "0..*" --> "1" User : étudiant
+Grade "0..*" --> "1" CourseModule
+Attendance "0..*" --> "1" ClassSession
+Attendance "0..*" --> "1" User : étudiant
+note right of CourseModule : le volume hebdomadaire\nalimente TimetablePlanner
+note bottom of Grade : GradeCalculator : 30 % CC, 50 % examen, 20 % TP\nvalidé ≥ 10, compensé si semestre ≥ 10 et note ≥ 5
+@enduml

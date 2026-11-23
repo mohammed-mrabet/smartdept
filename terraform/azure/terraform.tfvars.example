@@ -1,0 +1,5 @@
+# Copier en terraform.tfvars (ignoré par git)
+subscription_id     = "00000000-0000-0000-0000-000000000000"
+location            = "francecentral"
+admin_cidr          = "196.200.0.1/32" # votre IP publique : curl ifconfig.me
+ssh_public_key_path = "~/.ssh/id_rsa.pub"

@@ -1,0 +1,7 @@
+apiVersion: 1
+providers:
+  - name: SmartDept
+    folder: SmartDept
+    type: file
+    options:
+      path: /var/lib/grafana/dashboards

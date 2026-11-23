@@ -7,12 +7,13 @@ import { AuthService } from '../../core/auth.service';
 import { Application, Convention, Defense, Milestone, PfeStats, Project, Subject } from '../../core/models';
 import { APPLICATION_STATUS, MILESTONE_STATUS, PROJECT_STATUS, SUBJECT_STATUS, apiError, daysUntil, frDate, hhmm, today } from '../../core/labels';
 import { Badge } from '../../shared/badge';
+import { DashboardExtras } from './extras';
 
 interface ReviewItem { project: Project; milestone: Milestone; }
 
 @Component({
   selector: 'app-dashboard',
-  imports: [RouterLink, Badge, NgTemplateOutlet],
+  imports: [RouterLink, Badge, NgTemplateOutlet, DashboardExtras],
   template: `
     <div class="page">
       <div class="page-head">
@@ -31,6 +32,7 @@ interface ReviewItem { project: Project; milestone: Milestone; }
 
       @if (message()) { <div class="alert success" style="margin-bottom:16px">{{ message() }}</div> }
       @if (error()) { <div class="alert error" style="margin-bottom:16px">{{ error() }}</div> }
+      <app-dashboard-extras />
       @if (loading()) { <div class="spinner"></div> }
 
       <!-- ===================== chef / admin ===================== -->

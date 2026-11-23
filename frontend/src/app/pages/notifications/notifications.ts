@@ -151,6 +151,12 @@ export class Notifications implements OnInit {
     if (type.startsWith('CONVENTION')) return '📄';
     if (type.startsWith('PROJECT')) return '🎯';
     if (type === 'ANNOUNCEMENT') return '📣';
+    if (type.startsWith('OFFER')) return '💼';
+    if (type === 'SESSION_CHANGED' || type === 'TIMETABLE_PUBLISHED') return '🗓';
+    if (type === 'EXAM_SCHEDULED') return '📝';
+    if (type === 'GRADES_PUBLISHED') return '📈';
+    if (type.startsWith('ABSENCE')) return '🙋';
+    if (type === 'RISK_ALERT') return '🧭';
     return '🔔';
   }
 

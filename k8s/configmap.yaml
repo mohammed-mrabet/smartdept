@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: smartdept-config
+  namespace: smartdept
+data:
+  DB_URL: "jdbc:mysql://mysql:3306/smartdept_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Africa/Casablanca"
+  DB_USERNAME: "root"
+  MAIL_HOST: "mailpit"
+  MAIL_PORT: "1025"
+  FRONTEND_URL: "http://smartdept.local"
+  CORS_ORIGINS: "http://smartdept.local"
+  AI_ENABLED: "false"
+  AI_BASE_URL: "https://api.groq.com/openai/v1"
+  AI_MODEL: "llama-3.1-8b-instant"
+  # Journaux JSON (format ECS) pour Elasticsearch / Kibana
+  LOGGING_STRUCTURED_FORMAT_CONSOLE: "ecs"

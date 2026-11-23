@@ -22,7 +22,7 @@ public final class UserDtos {
     }
 
     public record FiliereSummary(Long id, String code, String name) {
-        static FiliereSummary of(Filiere f) {
+        public static FiliereSummary of(Filiere f) {
             return f == null ? null : new FiliereSummary(f.getId(), f.getCode(), f.getName());
         }
     }
@@ -84,12 +84,14 @@ public final class UserDtos {
             @NotBlank(message = "Le code est obligatoire") @Size(max = 30) String code,
             @NotBlank(message = "Le nom est obligatoire") @Size(max = 150) String name,
             @NotBlank(message = "Le niveau est obligatoire") @Size(max = 30) String level,
-            @Size(max = 500) String description) {
+            @Size(max = 500) String description,
+            ma.ump.smartdept.common.StudyLevel studyLevel) {
     }
 
-    public record FiliereResponse(Long id, String code, String name, String level, String description) {
+    public record FiliereResponse(Long id, String code, String name, String level, String description,
+                                  ma.ump.smartdept.common.StudyLevel studyLevel) {
         public static FiliereResponse of(Filiere f) {
-            return new FiliereResponse(f.getId(), f.getCode(), f.getName(), f.getLevel(), f.getDescription());
+            return new FiliereResponse(f.getId(), f.getCode(), f.getName(), f.getLevel(), f.getDescription(), f.getStudyLevel());
         }
     }
 }

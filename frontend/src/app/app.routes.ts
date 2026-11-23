@@ -43,6 +43,39 @@ export const routes: Routes = [
       { path: 'pfe/conventions/:id', loadComponent: () => import('./pages/pfe/conventions/convention-detail').then(m => m.ConventionDetail), title: 'Convention · SmartDept' },
       { path: 'notifications', loadComponent: () => import('./pages/notifications/notifications').then(m => m.Notifications), title: 'Notifications · SmartDept' },
       { path: 'profil', loadComponent: () => import('./pages/profile/profile').then(m => m.Profile), title: 'Mon profil · SmartDept' },
+      // ---------- offres de stage
+      { path: 'offres', loadComponent: () => import('./pages/offers/offers').then(m => m.Offers), title: 'Offres de stage · SmartDept' },
+      { path: 'offres/suivi', loadComponent: () => import('./pages/offers/tracking').then(m => m.OfferTracking), title: 'Suivi des candidatures · SmartDept' },
+      { path: 'offres/alertes', loadComponent: () => import('./pages/offers/alerts').then(m => m.OfferAlerts), title: 'Mes alertes · SmartDept' },
+      {
+        path: 'offres/marche', canActivate: [roleGuard], data: { roles: TEACHERS },
+        loadComponent: () => import('./pages/offers/market').then(m => m.OfferMarket), title: 'Sources et marché · SmartDept'
+      },
+      {
+        path: 'offres/publier', canActivate: [roleGuard], data: { roles: TEACHERS },
+        loadComponent: () => import('./pages/offers/offer-form').then(m => m.OfferForm), title: 'Publier une offre · SmartDept'
+      },
+      {
+        path: 'offres/:id/modifier', canActivate: [roleGuard], data: { roles: TEACHERS },
+        loadComponent: () => import('./pages/offers/offer-form').then(m => m.OfferForm), title: 'Modifier une offre · SmartDept'
+      },
+      // ---------- scolarité
+      { path: 'emploi-du-temps', loadComponent: () => import('./pages/academic/timetable').then(m => m.Timetable), title: 'Emploi du temps · SmartDept' },
+      {
+        path: 'emploi-du-temps/planification', canActivate: [roleGuard], data: { roles: MANAGERS },
+        loadComponent: () => import('./pages/academic/planner').then(m => m.Planner), title: 'Planification automatique · SmartDept'
+      },
+      { path: 'examens', loadComponent: () => import('./pages/academic/exams').then(m => m.Exams), title: 'Examens · SmartDept' },
+      { path: 'notes', loadComponent: () => import('./pages/academic/grades').then(m => m.Grades), title: 'Notes · SmartDept' },
+      { path: 'absences', loadComponent: () => import('./pages/academic/absences').then(m => m.Absences), title: 'Absences · SmartDept' },
+      {
+        path: 'suivi-etudiants', canActivate: [roleGuard], data: { roles: TEACHERS },
+        loadComponent: () => import('./pages/academic/risks').then(m => m.Risks), title: 'Suivi des étudiants · SmartDept'
+      },
+      {
+        path: 'admin/scolarite', canActivate: [roleGuard], data: { roles: MANAGERS },
+        loadComponent: () => import('./pages/academic/referential').then(m => m.Referential), title: 'Salles et modules · SmartDept'
+      },
       {
         path: 'admin/utilisateurs', canActivate: [roleGuard], data: { roles: MANAGERS },
         loadComponent: () => import('./pages/admin/users').then(m => m.Users), title: 'Utilisateurs · SmartDept'

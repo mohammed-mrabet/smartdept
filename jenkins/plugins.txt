@@ -1,0 +1,13 @@
+workflow-aggregator
+git
+github
+docker-workflow
+credentials-binding
+ssh-agent
+junit
+coverage
+sonar
+timestamper
+ws-cleanup
+blueocean
+configuration-as-code

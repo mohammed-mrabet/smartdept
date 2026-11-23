@@ -49,5 +49,6 @@ public class FiliereService {
         f.setName(r.name().trim());
         f.setLevel(r.level().trim().toUpperCase());
         f.setDescription(r.description() == null || r.description().isBlank() ? null : r.description().trim());
+        f.setStudyLevel(r.studyLevel());
     }
 }

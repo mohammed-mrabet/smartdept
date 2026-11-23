@@ -1,0 +1,22 @@
+# Variables du déploiement. Les secrets se placent dans group_vars/vault.yml chiffré :
+#   ansible-vault create group_vars/vault.yml   (voir vault.example.yml)
+app_dir: /opt/smartdept
+dockerhub_user: "votre-compte-dockerhub"
+image_tag: latest
+enable_observability: true
+mysql_root_password: "{{ vault_mysql_root_password | default('change-me') }}"
+jwt_secret: "{{ vault_jwt_secret | default('remplacer-par-une-longue-chaine-aleatoire-de-plus-de-32-caracteres') }}"
+ai_enabled: false
+ai_base_url: "https://api.groq.com/openai/v1"
+ai_model: "llama-3.1-8b-instant"
+ai_api_key: "{{ vault_ai_api_key | default('') }}"
+offers_keys:
+  ADZUNA_APP_ID: "{{ vault_adzuna_app_id | default('') }}"
+  ADZUNA_APP_KEY: "{{ vault_adzuna_app_key | default('') }}"
+  JOOBLE_KEYS: "{{ vault_jooble_keys | default('') }}"
+  CAREERJET_API_KEY: "{{ vault_careerjet_api_key | default('') }}"
+  FRANCE_TRAVAIL_CLIENT_ID: "{{ vault_france_travail_client_id | default('') }}"
+  FRANCE_TRAVAIL_CLIENT_SECRET: "{{ vault_france_travail_client_secret | default('') }}"
+  LBA_API_KEY: "{{ vault_lba_api_key | default('') }}"
+  INFOJOBS_CLIENT_ID: "{{ vault_infojobs_client_id | default('') }}"
+  INFOJOBS_CLIENT_SECRET: "{{ vault_infojobs_client_secret | default('') }}"

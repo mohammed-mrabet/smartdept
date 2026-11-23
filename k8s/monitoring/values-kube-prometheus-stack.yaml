@@ -1,0 +1,14 @@
+# Supervision dans Kubernetes avec le chart kube-prometheus-stack :
+#   helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+#   helm install monitoring prometheus-community/kube-prometheus-stack -n monitoring --create-namespace -f k8s/monitoring/values-kube-prometheus-stack.yaml
+#   kubectl apply -f k8s/monitoring/servicemonitor.yaml
+grafana:
+  adminPassword: smartdept
+  sidecar:
+    dashboards:
+      enabled: true
+      label: grafana_dashboard
+prometheus:
+  prometheusSpec:
+    serviceMonitorSelectorNilUsesHelmValues: false
+    ruleSelectorNilUsesHelmValues: false

@@ -1,0 +1,45 @@
+- name: Dossier des clés APT
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: "0755"
+
+- name: Clé GPG du dépôt Docker
+  ansible.builtin.get_url:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    dest: /etc/apt/keyrings/docker.asc
+    mode: "0644"
+
+- name: Dépôt Docker
+  ansible.builtin.deb822_repository:
+    name: docker
+    types: [deb]
+    uris: https://download.docker.com/linux/ubuntu
+    suites: ["{{ ansible_distribution_release }}"]
+    components: [stable]
+    architectures: [amd64]
+    signed_by: /etc/apt/keyrings/docker.asc
+
+- name: Docker Engine et le plugin Compose
+  ansible.builtin.apt:
+    name: [docker-ce, docker-ce-cli, containerd.io, docker-compose-plugin]
+    update_cache: true
+
+- name: Service Docker démarré au boot
+  ansible.builtin.service:
+    name: docker
+    state: started
+    enabled: true
+
+- name: L'utilisateur de connexion peut utiliser Docker
+  ansible.builtin.user:
+    name: "{{ ansible_user }}"
+    groups: docker
+    append: true
+
+- name: Limiter la taille des journaux des conteneurs
+  ansible.builtin.copy:
+    dest: /etc/docker/daemon.json
+    content: '{ "log-driver": "json-file", "log-opts": { "max-size": "20m", "max-file": "3" } }'
+    mode: "0644"
+  notify: Restart docker

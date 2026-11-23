@@ -9,7 +9,7 @@ export type DefenseStatus = 'SCHEDULED' | 'DONE' | 'CANCELLED';
 export type ConventionStatus = 'DRAFT' | 'SUBMITTED' | 'VALIDATED' | 'REJECTED';
 
 export interface FiliereSummary { id: number; code: string; name: string; }
-export interface Filiere extends FiliereSummary { level: string; description?: string; }
+export interface Filiere extends FiliereSummary { level: string; description?: string; studyLevel?: 'BAC_2' | 'BAC_3' | 'BAC_4' | 'BAC_5'; }
 export interface UserSummary { id: number; fullName: string; email: string; role: Role; }
 
 export interface User {

@@ -1,0 +1,45 @@
+- name: Dossier de l'application
+  ansible.builtin.file:
+    path: "{{ app_dir }}"
+    state: directory
+    mode: "0750"
+
+- name: Fichier d'environnement (secrets, clés des API)
+  ansible.builtin.template:
+    src: env.j2
+    dest: "{{ app_dir }}/.env"
+    mode: "0600"
+  notify: Redeploy
+
+- name: Fichier docker-compose de production (images Docker Hub)
+  ansible.builtin.copy:
+    src: ../../../../docker-compose.prod.yml
+    dest: "{{ app_dir }}/docker-compose.yml"
+    mode: "0644"
+  notify: Redeploy
+
+- name: Télécharger les images de la version demandée
+  ansible.builtin.command: docker compose pull
+  args:
+    chdir: "{{ app_dir }}"
+  changed_when: false
+
+- name: Démarrer ou mettre à jour SmartDept
+  ansible.builtin.command: docker compose up -d --remove-orphans
+  args:
+    chdir: "{{ app_dir }}"
+  register: app_up
+  changed_when: "'Started' in app_up.stderr or 'Recreated' in app_up.stderr"
+
+- name: Attendre que le backend soit prêt
+  ansible.builtin.uri:
+    url: "http://localhost/actuator/health"
+    status_code: 200
+  register: app_health
+  retries: 30
+  delay: 10
+  until: app_health.status == 200
+
+- name: Adresse de l'application
+  ansible.builtin.debug:
+    msg: "SmartDept est en ligne : http://{{ public_host | default(inventory_hostname) }}"

@@ -1,0 +1,29 @@
+# Collecte les journaux JSON (format ECS) des conteneurs SmartDept et les envoie à Elasticsearch
+filebeat.autodiscover:
+  providers:
+    - type: docker
+      templates:
+        - condition:
+            contains:
+              docker.container.image: smartdept-backend
+          config:
+            - type: container
+              paths:
+                - /var/lib/docker/containers/${data.docker.container.id}/*.log
+              processors:
+                - decode_json_fields:
+                    fields: ["message"]
+                    target: ""
+                    overwrite_keys: true
+                    add_error_key: true
+
+processors:
+  - add_docker_metadata: ~
+
+output.elasticsearch:
+  hosts: ["http://elasticsearch:9200"]
+  index: "smartdept-%{+yyyy.MM.dd}"
+
+setup.template.name: "smartdept"
+setup.template.pattern: "smartdept-*"
+setup.ilm.enabled: false

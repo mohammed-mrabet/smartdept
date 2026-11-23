@@ -1,0 +1,40 @@
+@startuml deploiement
+skinparam shadowing false
+title Chaîne DevOps et cibles de déploiement
+node "GitHub" {
+  [Dépôt Git] as GIT
+  [GitHub Actions\ntests · JaCoCo · Trivy · SBOM\nTerraform/K8s/Ansible lint] as GHA
+}
+node "Jenkins" as JK {
+  [Pipeline\ntests · Sonar · images · Trivy\npush · validation · déploiement] as JP
+}
+cloud "Docker Hub" as DH
+node "Azure (Terraform)" {
+  node "VM Ubuntu (Ansible)" {
+    [frontend nginx] as F1
+    [backend Spring Boot] as B1
+    database "MySQL" as M1
+    [Prometheus · Grafana\nAlertmanager · ELK] as MON
+  }
+}
+node "Kubernetes (minikube / AKS)" {
+  [Ingress nginx] as ING
+  [frontend ×2] as F2
+  [backend ×2..5 (HPA)] as B2
+  database "MySQL StatefulSet" as M2
+}
+GIT --> GHA
+GIT --> JP
+GHA --> DH
+JP --> DH
+DH --> F1
+DH --> B1
+DH --> F2
+DH --> B2
+F1 --> B1
+B1 --> M1
+MON ..> B1 : /actuator/prometheus
+ING --> F2
+F2 --> B2
+B2 --> M2
+@enduml

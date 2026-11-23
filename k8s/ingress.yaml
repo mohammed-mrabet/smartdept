@@ -1,0 +1,25 @@
+# Contrôleur NGINX requis (minikube addons enable ingress). Ajouter "127.0.0.1 smartdept.local" (ou l'IP minikube) dans /etc/hosts.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: smartdept
+  namespace: smartdept
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: 10m
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: smartdept.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service: { name: frontend, port: { number: 80 } }
+    - host: mail.smartdept.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service: { name: mailpit, port: { number: 8025 } }

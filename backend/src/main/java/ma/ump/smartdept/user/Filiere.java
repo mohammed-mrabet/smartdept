@@ -1,5 +1,6 @@
 package ma.ump.smartdept.user;
 
+import ma.ump.smartdept.common.StudyLevel;
 import jakarta.persistence.*;
 import ma.ump.smartdept.common.BaseEntity;
 
@@ -19,6 +20,10 @@ public class Filiere extends BaseEntity {
 
     @Column(length = 500)
     private String description;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "study_level", length = 10)
+    private StudyLevel studyLevel;
 
     public String getCode() {
         return code;
@@ -50,5 +55,13 @@ public class Filiere extends BaseEntity {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public StudyLevel getStudyLevel() {
+        return studyLevel;
+    }
+
+    public void setStudyLevel(StudyLevel studyLevel) {
+        this.studyLevel = studyLevel;
     }
 }

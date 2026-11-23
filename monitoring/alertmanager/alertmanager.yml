@@ -1,0 +1,13 @@
+# Les alertes partent par e-mail ; en local elles arrivent dans Mailpit (http://localhost:8025)
+route:
+  receiver: equipe
+  group_by: ["alertname"]
+  group_wait: 30s
+  repeat_interval: 4h
+receivers:
+  - name: equipe
+    email_configs:
+      - to: chef@smartdept.ma
+        from: alertes@smartdept.ma
+        smarthost: mailpit:1025
+        require_tls: false

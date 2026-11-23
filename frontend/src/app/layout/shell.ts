@@ -15,6 +15,20 @@ const NAV: { title: string; items: NavItem[] }[] = [
     { label: 'Tableau de bord', icon: '◧', link: '/tableau-de-bord' },
     { label: 'Notifications', icon: '🔔', link: '/notifications' }
   ] },
+  { title: 'Stages et emploi', items: [
+    { label: 'Offres de stage', icon: '💼', link: '/offres', exact: true },
+    { label: 'Mon suivi', icon: '📋', link: '/offres/suivi', roles: ['ETUDIANT'] },
+    { label: 'Mes alertes', icon: '🔔', link: '/offres/alertes', roles: ['ETUDIANT'] },
+    { label: 'Sources et marché', icon: '📊', link: '/offres/marche', roles: ['ENSEIGNANT', 'CHEF_DEPARTEMENT', 'ADMIN'] }
+  ] },
+  { title: 'Scolarité', items: [
+    { label: 'Emploi du temps', icon: '🗓', link: '/emploi-du-temps', exact: true },
+    { label: 'Examens', icon: '📝', link: '/examens' },
+    { label: 'Mes notes', icon: '📈', link: '/notes', roles: ['ETUDIANT'] },
+    { label: 'Saisie des notes', icon: '📈', link: '/notes', roles: ['ENSEIGNANT', 'CHEF_DEPARTEMENT', 'ADMIN'] },
+    { label: 'Absences', icon: '🙋', link: '/absences' },
+    { label: 'Suivi des étudiants', icon: '🧭', link: '/suivi-etudiants', roles: ['ENSEIGNANT', 'CHEF_DEPARTEMENT', 'ADMIN'] }
+  ] },
   { title: 'Projets de fin d’études', items: [
     { label: 'Sujets', icon: '📚', link: '/pfe/sujets', exact: true },
     { label: 'Proposer un sujet', icon: '✚', link: '/pfe/sujets/nouveau', roles: ['ENSEIGNANT', 'CHEF_DEPARTEMENT', 'ADMIN'] },
@@ -25,7 +39,8 @@ const NAV: { title: string; items: NavItem[] }[] = [
     { label: 'Conventions de stage', icon: '📄', link: '/pfe/conventions' }
   ] },
   { title: 'Administration', items: [
-    { label: 'Utilisateurs', icon: '👥', link: '/admin/utilisateurs', roles: ['ADMIN', 'CHEF_DEPARTEMENT'] }
+    { label: 'Utilisateurs', icon: '👥', link: '/admin/utilisateurs', roles: ['ADMIN', 'CHEF_DEPARTEMENT'] },
+    { label: 'Salles et modules', icon: '🏫', link: '/admin/scolarite', roles: ['ADMIN', 'CHEF_DEPARTEMENT'] }
   ] }
 ];
 

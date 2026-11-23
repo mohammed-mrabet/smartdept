@@ -1,0 +1,29 @@
+- name: Mettre à jour le cache APT et installer les outils de base
+  ansible.builtin.apt:
+    name: [ca-certificates, curl, gnupg, ufw, fail2ban, unattended-upgrades]
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Pare-feu — autoriser SSH, HTTP et les outils d'administration
+  community.general.ufw:
+    rule: allow
+    port: "{{ item }}"
+    proto: tcp
+  loop: ["22", "80", "443", "3000", "5601", "8025", "9090"]
+
+- name: Pare-feu — refuser le reste par défaut et activer
+  community.general.ufw:
+    state: enabled
+    policy: deny
+    direction: incoming
+
+- name: Fuseau horaire du Maroc
+  community.general.timezone:
+    name: Africa/Casablanca
+
+- name: Fichier d'échange de 2 Go (MySQL + Elasticsearch sur une B2s)
+  ansible.builtin.shell: |
+    fallocate -l 2G /swapfile && chmod 600 /swapfile && mkswap /swapfile && swapon /swapfile
+    echo '/swapfile none swap sw 0 0' >> /etc/fstab
+  args:
+    creates: /swapfile

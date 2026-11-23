@@ -1,0 +1,16 @@
+# TP9 : configuration de la machine Azure et déploiement de SmartDept
+#   ansible-playbook site.yml                       (tout)
+#   ansible-playbook site.yml --tags app -e image_tag=1a2b3c4   (mise à jour de l'application seule)
+- name: Déployer SmartDept
+  hosts: smartdept
+  become: true
+  pre_tasks:
+    - name: Charger les secrets chiffrés s'ils existent
+      ansible.builtin.include_vars: group_vars/vault.yml
+      when: lookup('ansible.builtin.fileglob', 'group_vars/vault.yml') | length > 0
+      tags: [always]
+  roles:
+    - { role: common, tags: [common] }
+    - { role: docker, tags: [docker] }
+    - { role: app, tags: [app] }
+    - { role: monitoring, tags: [monitoring], when: enable_observability | bool }

@@ -1,0 +1,40 @@
+@startuml offres-architecture
+skinparam shadowing false
+skinparam componentStyle rectangle
+title Agrégation des offres de stage
+package "API gratuites" {
+  [France Travail\n(FR, OAuth2)] as FT
+  [La bonne alternance\n(FR, alternance)] as LBA
+  [Adzuna\n(FR, BE, ES, CA)] as AD
+  [Jooble\n(MA, FR, …)] as JO
+  [Careerjet\n(MA, FR, BE, ES, CA)] as CJ
+  [InfoJobs\n(ES)] as IJ
+  [Remotive · Jobicy · Arbeitnow\n(télétravail, sans clé)] as RM
+}
+package "Backend SmartDept" {
+  interface "OfferProvider" as OP
+  [OfferSyncService\n@Scheduled toutes les 6 h\n+ recherche en direct] as SYNC
+  [OfferStore\n(source, externalId) unique] as STORE
+  [OfferClassifier\ntype · Bac+2..5 · compétences\ndurée · télétravail · pays] as CLS
+  [OfferAlertService\nalertes + relances J+14] as ALERT
+  [OfferAiService\nscore profil / offre\nlettre de motivation] as AI
+  [NotificationService] as NOTIF
+  database "MySQL\ninternship_offers\noffer_alerts\noffer_bookmarks" as DB
+}
+[Angular\n/offres, /offres/suivi, /offres/alertes] as UI
+FT -down- OP
+LBA -down- OP
+AD -down- OP
+JO -down- OP
+CJ -down- OP
+IJ -down- OP
+RM -down- OP
+OP <.. SYNC
+SYNC --> STORE
+STORE --> CLS
+STORE --> DB
+SYNC --> ALERT : nouvelles offres
+ALERT --> NOTIF : application + e-mail
+UI --> AI
+UI --> DB : recherche multicritère
+@enduml

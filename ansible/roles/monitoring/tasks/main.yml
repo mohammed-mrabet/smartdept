@@ -1,0 +1,24 @@
+- name: Copier la configuration de supervision
+  ansible.builtin.copy:
+    src: ../../../../monitoring/
+    dest: "{{ app_dir }}/monitoring/"
+    mode: "0644"
+    directory_mode: "0755"
+
+- name: Copier le fichier compose de supervision
+  ansible.builtin.copy:
+    src: ../../../../docker-compose.observability.yml
+    dest: "{{ app_dir }}/docker-compose.observability.yml"
+    mode: "0644"
+
+- name: Paramètre noyau requis par Elasticsearch
+  ansible.posix.sysctl:
+    name: vm.max_map_count
+    value: "262144"
+    state: present
+
+- name: Démarrer Prometheus, Grafana, Alertmanager et ELK
+  ansible.builtin.command: docker compose -f docker-compose.yml -f docker-compose.observability.yml up -d
+  args:
+    chdir: "{{ app_dir }}"
+  changed_when: false
