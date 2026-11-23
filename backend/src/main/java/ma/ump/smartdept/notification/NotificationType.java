@@ -1,0 +1,23 @@
+package ma.ump.smartdept.notification;
+
+/** Catégories de notification (permettent filtres et icônes côté interface). */
+public enum NotificationType {
+    ACCOUNT,
+    SUBJECT_PROPOSED,
+    SUBJECT_PUBLISHED,
+    SUBJECT_REJECTED,
+    APPLICATION_RECEIVED,
+    APPLICATION_ACCEPTED,
+    APPLICATION_REJECTED,
+    PROJECT_CREATED,
+    MILESTONE_SUBMITTED,
+    MILESTONE_REVIEWED,
+    MILESTONE_DUE,
+    PROJECT_READY,
+    DEFENSE_SCHEDULED,
+    DEFENSE_UPDATED,
+    DEFENSE_GRADED,
+    CONVENTION_SUBMITTED,
+    CONVENTION_REVIEWED,
+    ANNOUNCEMENT
+}

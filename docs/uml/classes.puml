@@ -1,0 +1,105 @@
+@startuml classes
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+hide empty methods
+abstract class BaseEntity {
+  id : Long
+  createdAt : LocalDateTime
+  updatedAt : LocalDateTime
+}
+class User {
+  email : String
+  firstName, lastName : String
+  role : Role
+  enabled : boolean
+  studentNumber : String
+  specialties : String
+  emailNotifications : boolean
+}
+class Filiere {
+  code : String
+  name : String
+  level : String
+}
+class PfeSubject {
+  title : String
+  description : Text
+  keywords : String
+  type : SubjectType
+  maxStudents : int
+  status : SubjectStatus
+  academicYear : String
+}
+class PfeApplication {
+  preferenceRank : int
+  motivation : Text
+  status : ApplicationStatus
+  decisionComment : String
+}
+class PfeProject {
+  status : ProjectStatus
+  externalSupervisorName : String
+  + progress() : int
+}
+class PfeMilestone {
+  title : String
+  dueDate : LocalDate
+  status : MilestoneStatus
+  deliverableUrl : String
+  feedback : Text
+  grade : Double
+  + isLate(today) : boolean
+}
+class PfeDefense {
+  defenseDate : LocalDate
+  startTime, endTime : LocalTime
+  room : String
+  status : DefenseStatus
+  grade : Double
+  mention : String
+  + overlaps(...) : boolean
+}
+class InternshipConvention {
+  companyName : String
+  tutorName, tutorEmail : String
+  startDate, endDate : LocalDate
+  status : ConventionStatus
+}
+class Notification {
+  type : NotificationType
+  title : String
+  message : Text
+  link : String
+  read : boolean
+  emailStatus : EmailStatus
+}
+enum Role {
+  ADMIN
+  CHEF_DEPARTEMENT
+  ENSEIGNANT
+  ETUDIANT
+}
+BaseEntity <|-- User
+BaseEntity <|-- PfeSubject
+BaseEntity <|-- PfeApplication
+BaseEntity <|-- PfeProject
+BaseEntity <|-- PfeMilestone
+BaseEntity <|-- PfeDefense
+BaseEntity <|-- InternshipConvention
+BaseEntity <|-- Notification
+User "0..*" --> "0..1" Filiere : étudiant de
+User --> Role
+PfeSubject "0..*" --> "1" User : encadrant
+PfeSubject "0..*" --> "1" Filiere
+PfeApplication "0..*" --> "1" PfeSubject
+PfeApplication "0..*" --> "1" User : étudiant
+PfeProject "1" --> "1" PfeSubject
+PfeProject "0..*" --> "1..2" User : étudiants
+PfeProject "1" *-- "0..*" PfeMilestone : jalons
+PfeDefense "0..1" --> "1" PfeProject
+PfeDefense "0..*" --> "2..*" User : jury
+PfeDefense --> "1" User : président
+InternshipConvention "0..*" --> "1" User : étudiant
+InternshipConvention --> "0..1" PfeProject
+Notification "0..*" --> "1" User : destinataire
+@enduml

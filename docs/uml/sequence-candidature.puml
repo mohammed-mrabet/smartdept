@@ -1,0 +1,36 @@
+@startuml sequence-candidature
+skinparam shadowing false
+autonumber
+actor "Enseignant" as T
+participant "Angular" as UI
+participant "PfeApplicationController" as C
+participant "PfeApplicationService" as S
+database "MySQL" as DB
+participant "NotificationService" as N
+participant "EmailService\n(@Async, après commit)" as MAIL
+actor "Étudiant" as E
+T -> UI : clic « Accepter »
+UI -> C : PATCH /api/pfe/applications/{id}/accept\nAuthorization: Bearer JWT
+C -> S : accept(me, id, comment)
+S -> DB : charger candidature + sujet
+alt l'enseignant n'est pas l'encadrant
+  S --> C : 403 Forbidden
+else sujet complet ou étudiant déjà affecté
+  S --> C : 409 Conflict
+else
+  S -> DB : candidature ACCEPTED\ncréer PfeProject + 4 jalons
+  S -> DB : retirer les autres candidatures de l'étudiant
+  opt sujet complet
+    S -> DB : sujet ASSIGNED, refuser les candidatures restantes
+  end
+  S -> N : notify(étudiant, APPLICATION_ACCEPTED, lien /pfe/mon-projet)
+  N -> DB : insérer Notification (emailStatus = PENDING)
+  S --> C : ApplicationResponse
+  C --> UI : 200 OK
+  ... après le commit de la transaction ...
+  N ->> MAIL : NotificationCreatedEvent
+  MAIL -> E : e-mail HTML « Candidature acceptée »
+  MAIL -> DB : emailStatus = SENT
+  E -> UI : la cloche affiche 1 nouvelle notification (toutes les 30 s)
+end
+@enduml

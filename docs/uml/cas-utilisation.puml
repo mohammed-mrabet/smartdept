@@ -1,0 +1,55 @@
+@startuml cas-utilisation
+left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
+actor "Étudiant" as E
+actor "Enseignant" as T
+actor "Chef de département" as C
+actor "Administrateur" as A
+actor "Service e-mail (SMTP)" as M
+actor "Fournisseur IA\n(Ollama / Groq / Gemini)" as IA
+C -|> T
+rectangle "SmartDept · module PFE" {
+  usecase "Consulter et filtrer les sujets" as UC1
+  usecase "Candidater (3 choix classés)" as UC2
+  usecase "Rendre un livrable (jalon)" as UC3
+  usecase "Déposer une convention de stage" as UC4
+  usecase "Proposer un sujet" as UC5
+  usecase "Améliorer le sujet avec l'IA" as UC5b
+  usecase "Accepter / refuser une candidature" as UC6
+  usecase "Évaluer un jalon" as UC7
+  usecase "Déclarer le projet prêt" as UC8
+  usecase "Valider / refuser un sujet" as UC9
+  usecase "Affectation automatique" as UC10
+  usecase "Programmer une soutenance\n(jury suggéré par l'IA)" as UC11
+  usecase "Saisir la note de soutenance" as UC12
+  usecase "Valider une convention" as UC13
+  usecase "Envoyer une annonce" as UC14
+  usecase "Gérer les utilisateurs" as UC15
+  usecase "Discuter avec l'assistant" as UC16
+  usecase "Recevoir les notifications\n(application + e-mail)" as UC17
+}
+E --> UC1
+E --> UC2
+E --> UC3
+E --> UC4
+T --> UC5
+T --> UC6
+T --> UC7
+T --> UC8
+T --> UC12
+C --> UC9
+C --> UC10
+C --> UC11
+C --> UC13
+C --> UC14
+A --> UC15
+E --> UC16
+T --> UC16
+E --> UC17
+T --> UC17
+UC5 <.. UC5b : <<extend>>
+UC17 --> M
+UC5b --> IA
+UC16 --> IA
+@enduml

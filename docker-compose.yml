@@ -1,0 +1,58 @@
+# SmartDept : base MySQL, backend Spring Boot, frontend Angular (nginx) et Mailpit pour lire les e-mails.
+#   docker compose up -d --build           -> http://localhost        (application)
+#                                            http://localhost:8025   (boîte mail Mailpit)
+#   docker compose --profile ai up -d      -> ajoute Ollama (IA locale gratuite)
+services:
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: smartdept_db
+    ports: ["3307:3306"]
+    volumes: [mysql-data:/var/lib/mysql]
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  mailpit:
+    image: axllent/mailpit:v1.21
+    ports: ["8025:8025", "1025:1025"]
+
+  backend:
+    build: ./backend
+    image: ${DOCKERHUB_USER:-smartdept}/smartdept-backend:latest
+    depends_on:
+      mysql: { condition: service_healthy }
+      mailpit: { condition: service_started }
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/smartdept_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Africa/Casablanca
+      DB_USERNAME: root
+      DB_PASSWORD: root
+      JWT_SECRET: ${JWT_SECRET:-change-me-in-production-this-secret-must-be-long-enough-256bits}
+      MAIL_HOST: mailpit
+      MAIL_PORT: 1025
+      FRONTEND_URL: http://localhost
+      CORS_ORIGINS: http://localhost,http://localhost:4200
+      AI_ENABLED: ${AI_ENABLED:-false}
+      AI_BASE_URL: ${AI_BASE_URL:-http://ollama:11434/v1}
+      AI_API_KEY: ${AI_API_KEY:-}
+      AI_MODEL: ${AI_MODEL:-llama3.2:3b}
+    ports: ["8080:8080"]
+
+  frontend:
+    build: ./frontend
+    image: ${DOCKERHUB_USER:-smartdept}/smartdept-frontend:latest
+    depends_on: [backend]
+    ports: ["80:80"]
+
+  ollama:
+    image: ollama/ollama:latest
+    profiles: ["ai"]
+    ports: ["11434:11434"]
+    volumes: [ollama-data:/root/.ollama]
+
+volumes:
+  mysql-data:
+  ollama-data:
