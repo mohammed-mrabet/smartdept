@@ -48,6 +48,12 @@ public class OfferSyncService {
     private final int resultsPerQuery;
     private final Map<OfferSource, Instant> lastCall = new ConcurrentHashMap<>();
     private final Map<Long, Instant> lastLiveSearch = new ConcurrentHashMap<>();
+    private org.springframework.cache.CacheManager cacheManager;
+
+    @org.springframework.beans.factory.annotation.Autowired(required = false)
+    public void setCacheManager(org.springframework.cache.CacheManager cacheManager) {
+        this.cacheManager = cacheManager;
+    }
 
     public OfferSyncService(List<OfferProvider> providers, OfferStore store, InternshipOfferRepository offerRepository,
                             OfferSyncRunRepository runRepository, OfferAlertService alertService, Clock clock, MeterRegistry metrics,
@@ -93,6 +99,7 @@ public class OfferSyncService {
             updated += r.updated();
         }
         cleanup();
+        if (cacheManager != null) ma.ump.smartdept.config.CacheConfig.evictOffers(cacheManager);
         int alerts = alertService.dispatch(created);
         return new SyncSummary(results, created.size(), updated, alerts);
     }
@@ -120,6 +127,7 @@ public class OfferSyncService {
             results.add(r);
             updated += r.updated();
         }
+        if (cacheManager != null && (!created.isEmpty() || updated > 0)) ma.ump.smartdept.config.CacheConfig.evictOffers(cacheManager);
         int alerts = alertService.dispatch(created);
         return new SyncSummary(results, created.size(), updated, alerts);
     }

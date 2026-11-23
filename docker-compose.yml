@@ -1,5 +1,6 @@
-# SmartDept : base MySQL, backend Spring Boot, frontend Angular (nginx) et Mailpit pour lire les e-mails.
-#   docker compose up -d --build           -> http://localhost        (application)
+# SmartDept : MySQL, Redis (cache), backend Spring Boot, frontend Angular (nginx) et Mailpit (e-mails de test).
+# E-mails réels : renseigner SMTP_HOST, SMTP_USERNAME, SMTP_PASSWORD dans .env (voir .env.example).
+#   docker compose up -d --build           -> http://localhost        (accueil public + application)
 #                                            http://localhost:8025   (boîte mail Mailpit)
 #   docker compose --profile ai up -d      -> ajoute Ollama (IA locale gratuite)
 services:
@@ -20,19 +21,45 @@ services:
     image: axllent/mailpit:v1.21
     ports: ["8025:8025", "1025:1025"]
 
+  redis:
+    image: redis:7.4-alpine
+    command: ["redis-server", "--maxmemory", "128mb", "--maxmemory-policy", "allkeys-lru", "--save", ""]
+    ports: ["6379:6379"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
   backend:
     build: ./backend
     image: ${DOCKERHUB_USER:-smartdept}/smartdept-backend:latest
     depends_on:
       mysql: { condition: service_healthy }
       mailpit: { condition: service_started }
+      redis: { condition: service_healthy }
     environment:
       DB_URL: jdbc:mysql://mysql:3306/smartdept_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Africa/Casablanca
       DB_USERNAME: root
       DB_PASSWORD: root
       JWT_SECRET: ${JWT_SECRET:-change-me-in-production-this-secret-must-be-long-enough-256bits}
-      MAIL_HOST: mailpit
-      MAIL_PORT: 1025
+      # E-mails : vraie adresse -> SMTP réel (Gmail, Brevo…) ; adresse de démonstration ou invalide -> Mailpit
+      MAILPIT_HOST: mailpit
+      MAILPIT_PORT: 1025
+      MAILPIT_UI_URL: ${MAILPIT_UI_URL:-http://localhost:8025}
+      MAIL_MODE: ${MAIL_MODE:-auto}
+      MAIL_FROM: ${MAIL_FROM:-}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USERNAME: ${SMTP_USERNAME:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      SMTP_SECURITY: ${SMTP_SECURITY:-starttls}
+      # Cache et limitation des tentatives dans Redis
+      CACHE_TYPE: redis
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      RATE_LIMIT_STORE: redis
+      REDIS_HEALTH: "true"
       FRONTEND_URL: http://localhost
       CORS_ORIGINS: http://localhost,http://localhost:4200
       AI_ENABLED: ${AI_ENABLED:-false}

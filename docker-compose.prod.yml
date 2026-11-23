@@ -1,5 +1,5 @@
 # Production : images publiées sur Docker Hub (pas de build sur le serveur). Utilisé par Ansible.
-#   variables lues dans .env : DOCKERHUB_USER, IMAGE_TAG, MYSQL_ROOT_PASSWORD, JWT_SECRET, FRONTEND_URL, clés IA et API d'offres
+#   variables lues dans .env : DOCKERHUB_USER, IMAGE_TAG, MYSQL_ROOT_PASSWORD, JWT_SECRET, FRONTEND_URL, SMTP_*, clés IA et API d'offres
 services:
   mysql:
     image: mysql:8.4
@@ -18,18 +18,32 @@ services:
     restart: unless-stopped
     ports: ["8025:8025"]
 
+  redis:
+    image: redis:7.4-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--maxmemory", "128mb", "--maxmemory-policy", "allkeys-lru", "--save", ""]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      retries: 5
+
   backend:
     image: ${DOCKERHUB_USER}/smartdept-backend:${IMAGE_TAG:-latest}
     restart: unless-stopped
     depends_on:
       mysql: { condition: service_healthy }
+      redis: { condition: service_healthy }
     env_file: .env
     environment:
       DB_URL: jdbc:mysql://mysql:3306/smartdept_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Africa/Casablanca
       DB_USERNAME: root
       DB_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MAIL_HOST: mailpit
-      MAIL_PORT: 1025
+      MAILPIT_HOST: mailpit
+      MAILPIT_PORT: 1025
+      CACHE_TYPE: redis
+      REDIS_HOST: redis
+      RATE_LIMIT_STORE: redis
+      REDIS_HEALTH: "true"
       CORS_ORIGINS: ${FRONTEND_URL}
 
   frontend:

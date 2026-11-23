@@ -35,4 +35,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
             ORDER BY u.lastName ASC, u.firstName ASC
             """)
     List<User> search(@Param("role") Role role, @Param("q") String q);
+
+    long countByRoleAndEnabledTrue(Role role);
 }

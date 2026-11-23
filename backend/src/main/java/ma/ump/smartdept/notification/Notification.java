@@ -40,6 +40,13 @@ public class Notification extends BaseEntity {
     @Column(name = "email_status", nullable = false, length = 20)
     private EmailStatus emailStatus = EmailStatus.NOT_REQUESTED;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "email_channel", length = 10)
+    private MailChannel emailChannel;
+
+    @Column(name = "email_info", length = 255)
+    private String emailInfo;
+
     public void markRead() {
         if (!read) {
             read = true;
@@ -109,5 +116,21 @@ public class Notification extends BaseEntity {
 
     public void setEmailStatus(EmailStatus emailStatus) {
         this.emailStatus = emailStatus;
+    }
+
+    public MailChannel getEmailChannel() {
+        return emailChannel;
+    }
+
+    public void setEmailChannel(MailChannel emailChannel) {
+        this.emailChannel = emailChannel;
+    }
+
+    public String getEmailInfo() {
+        return emailInfo;
+    }
+
+    public void setEmailInfo(String emailInfo) {
+        this.emailInfo = emailInfo;
     }
 }

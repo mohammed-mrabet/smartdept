@@ -46,7 +46,7 @@ public final class OfferDtos {
     }
 
     public record Facets(Map<String, Long> countries, Map<String, Long> kinds, Map<String, Long> levels,
-                         Map<String, Long> sources, long unknownLevel) {
+                         Map<String, Long> sources, long unknownLevel) implements java.io.Serializable {
     }
 
     public record OfferPage(List<OfferResponse> items, long total, int page, int size, int totalPages, Facets facets,
@@ -130,12 +130,12 @@ public final class OfferDtos {
     public record CoverLetterResponse(String text, String language, String source) {
     }
 
-    public record NameCount(String name, long count) {
+    public record NameCount(String name, long count) implements java.io.Serializable {
     }
 
     public record OfferStats(long total, long newThisWeek, Map<String, Long> byCountry, Map<String, Long> byLevel,
                              Map<String, Long> byKind, Map<String, Long> bySource, List<NameCount> topSkills,
-                             List<NameCount> topCompanies, Map<String, Long> tracking) {
+                             List<NameCount> topCompanies, Map<String, Long> tracking) implements java.io.Serializable {
     }
 
     public record LevelInfo(StudyLevel level, int years, String label, String diplomas) {

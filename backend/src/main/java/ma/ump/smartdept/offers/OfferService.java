@@ -36,11 +36,14 @@ public class OfferService {
     private final UserRepository userRepository;
     private final NotificationService notifications;
     private final Clock clock;
+    private final OfferInsights insights;
+    private final org.springframework.cache.CacheManager cacheManager;
 
     public OfferService(InternshipOfferRepository offerRepository, OfferBookmarkRepository bookmarkRepository,
                         OfferAlertRepository alertRepository, OfferSyncRunRepository runRepository,
                         OfferSyncService syncService, OfferAlertService alertService, UserRepository userRepository,
-                        NotificationService notifications, Clock clock) {
+                        NotificationService notifications, Clock clock, OfferInsights insights,
+                        org.springframework.cache.CacheManager cacheManager) {
         this.offerRepository = offerRepository;
         this.bookmarkRepository = bookmarkRepository;
         this.alertRepository = alertRepository;
@@ -50,6 +53,8 @@ public class OfferService {
         this.userRepository = userRepository;
         this.notifications = notifications;
         this.clock = clock;
+        this.insights = insights;
+        this.cacheManager = cacheManager;
     }
 
     // ---------------------------------------------------------------- recherche
@@ -120,31 +125,8 @@ public class OfferService {
         return map;
     }
 
-    @Transactional(readOnly = true)
     public Facets facets() {
-        Map<String, Long> levels = new LinkedHashMap<>();
-        for (StudyLevel l : StudyLevel.values()) levels.put(l.name(), 0L);
-        long unknown = 0;
-        for (Object[] r : offerRepository.levelRanges()) {
-            Integer min = (Integer) r[0];
-            Integer max = (Integer) r[1];
-            if (min == null) {
-                unknown++;
-                continue;
-            }
-            for (StudyLevel l : StudyLevel.values()) {
-                if (l.getYears() >= min && l.getYears() <= (max == null ? min : max)) levels.merge(l.name(), 1L, Long::sum);
-            }
-        }
-        return new Facets(toMap(offerRepository.countByCountry()), toMap(offerRepository.countByKind()), levels,
-                toMap(offerRepository.countBySource()), unknown);
-    }
-
-    private static Map<String, Long> toMap(List<Object[]> rows) {
-        Map<String, Long> map = new LinkedHashMap<>();
-        rows.stream().sorted((a, b) -> Long.compare((Long) b[1], (Long) a[1]))
-                .forEach(r -> map.put(String.valueOf(r[0]), (Long) r[1]));
-        return map;
+        return insights.facets();
     }
 
     // ---------------------------------------------------------------- offres internes
@@ -157,6 +139,7 @@ public class OfferService {
         o.setPostedBy(me);
         apply(o, r);
         offerRepository.save(o);
+        ma.ump.smartdept.config.CacheConfig.evictOffers(cacheManager);
         announce(o);
         alertService.dispatch(List.of(o.getId()));
         return OfferResponse.of(o, true, null, null);
@@ -165,12 +148,14 @@ public class OfferService {
     public OfferResponse update(User me, Long id, OfferRequest r) {
         InternshipOffer o = requireOwnInternal(me, id);
         apply(o, r);
+        ma.ump.smartdept.config.CacheConfig.evictOffers(cacheManager);
         return OfferResponse.of(o, true, null, null);
     }
 
     public OfferResponse close(User me, Long id) {
         InternshipOffer o = requireOwnInternal(me, id);
         o.setActive(false);
+        ma.ump.smartdept.config.CacheConfig.evictOffers(cacheManager);
         return OfferResponse.of(o, true, null, null);
     }
 
@@ -348,26 +333,8 @@ public class OfferService {
         return list;
     }
 
-    @Transactional(readOnly = true)
     public OfferStats stats() {
-        Facets f = facets();
-        Map<String, Long> skills = new HashMap<>();
-        for (String s : offerRepository.allSkills()) {
-            for (String skill : OfferDtos.skillList(s)) skills.merge(skill, 1L, Long::sum);
-        }
-        List<NameCount> topSkills = skills.entrySet().stream()
-                .sorted(Map.Entry.<String, Long>comparingByValue().reversed()).limit(12)
-                .map(e -> new NameCount(e.getKey(), e.getValue())).toList();
-        List<NameCount> topCompanies = offerRepository.topCompanies(PageRequest.of(0, 8)).stream()
-                .map(r -> new NameCount(String.valueOf(r[0]), (Long) r[1])).toList();
-        Map<String, Long> tracking = new LinkedHashMap<>();
-        for (TrackingStatus s : TrackingStatus.values()) tracking.put(s.name(), 0L);
-        for (Object[] r : bookmarkRepository.countByStatus()) tracking.put(String.valueOf(r[0]), (Long) r[1]);
-        Map<String, Long> levels = new LinkedHashMap<>(f.levels());
-        levels.put("UNKNOWN", f.unknownLevel());
-        return new OfferStats(offerRepository.countByActiveTrue(),
-                offerRepository.countByActiveTrueAndCreatedAtAfter(LocalDateTime.now(clock).minusDays(7)),
-                f.countries(), levels, f.kinds(), f.sources(), topSkills, topCompanies, tracking);
+        return insights.stats();
     }
 
     public static List<LevelInfo> levels() {

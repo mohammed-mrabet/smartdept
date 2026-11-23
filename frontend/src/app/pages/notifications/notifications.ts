@@ -43,7 +43,9 @@ const EMAIL: Record<string, string> = { SENT: '✉ envoyé par e-mail', FAILED: 
               <div class="grow" (click)="open(n)">
                 <div class="row between"><strong>{{ n.title }}</strong><small class="muted nowrap">{{ ago(n.createdAt) }}</small></div>
                 <p class="text-2">{{ n.message }}</p>
-                @if (email[n.emailStatus]) { <small class="muted">{{ email[n.emailStatus] }}</small> }
+                @if (email[n.emailStatus]) {
+                  <small class="muted" [title]="n.emailInfo ?? ''">{{ email[n.emailStatus] }}{{ n.emailChannel === 'MAILPIT' ? ' (Mailpit, test)' : n.emailChannel === 'SMTP' ? ' (SMTP)' : '' }}</small>
+                }
               </div>
               <div class="acts">
                 @if (!n.read) { <button class="btn-link small" (click)="markRead(n)">Lu</button> }

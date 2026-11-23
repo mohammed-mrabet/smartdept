@@ -29,4 +29,6 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     /** Évite d'envoyer deux fois le même rappel (même destinataire, même lien, même jour). */
     boolean existsByRecipientIdAndTypeAndLinkAndCreatedAtAfter(Long recipientId, NotificationType type, String link,
                                                                LocalDateTime after);
+
+    long countByEmailStatus(EmailStatus status);
 }

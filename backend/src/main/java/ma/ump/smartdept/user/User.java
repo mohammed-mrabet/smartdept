@@ -52,6 +52,10 @@ public class User extends BaseEntity {
     @Column(name = "last_login_at")
     private LocalDateTime lastLoginAt;
 
+    /** Faux pour un compte créé par inscription tant que le lien reçu par e-mail n'a pas été ouvert. */
+    @Column(name = "email_verified", nullable = false)
+    private boolean emailVerified = true;
+
     public String getFullName() {
         return firstName + " " + lastName;
     }
@@ -150,5 +154,13 @@ public class User extends BaseEntity {
 
     public void setLastLoginAt(LocalDateTime lastLoginAt) {
         this.lastLoginAt = lastLoginAt;
+    }
+
+    public boolean isEmailVerified() {
+        return emailVerified;
+    }
+
+    public void setEmailVerified(boolean emailVerified) {
+        this.emailVerified = emailVerified;
     }
 }

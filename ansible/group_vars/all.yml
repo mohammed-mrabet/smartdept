@@ -6,6 +6,13 @@ image_tag: latest
 enable_observability: true
 mysql_root_password: "{{ vault_mysql_root_password | default('change-me') }}"
 jwt_secret: "{{ vault_jwt_secret | default('remplacer-par-une-longue-chaine-aleatoire-de-plus-de-32-caracteres') }}"
+# E-mails réels (Gmail : mot de passe d'application ; Brevo : clé SMTP). Vide = tout part dans Mailpit
+mail_mode: auto
+mail_from: ""
+smtp_host: ""
+smtp_port: 587
+smtp_username: ""
+smtp_password: "{{ vault_smtp_password | default('') }}"
 ai_enabled: false
 ai_base_url: "https://api.groq.com/openai/v1"
 ai_model: "llama-3.1-8b-instant"

@@ -29,5 +29,6 @@ public enum NotificationType {
     GRADES_PUBLISHED,
     ABSENCE_WARNING,
     ABSENCE_JUSTIFICATION,
-    RISK_ALERT
+    RISK_ALERT,
+    CONTACT_MESSAGE
 }

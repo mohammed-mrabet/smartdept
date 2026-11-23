@@ -40,7 +40,8 @@ const NAV: { title: string; items: NavItem[] }[] = [
   ] },
   { title: 'Administration', items: [
     { label: 'Utilisateurs', icon: '👥', link: '/admin/utilisateurs', roles: ['ADMIN', 'CHEF_DEPARTEMENT'] },
-    { label: 'Salles et modules', icon: '🏫', link: '/admin/scolarite', roles: ['ADMIN', 'CHEF_DEPARTEMENT'] }
+    { label: 'Salles et modules', icon: '🏫', link: '/admin/scolarite', roles: ['ADMIN', 'CHEF_DEPARTEMENT'] },
+    { label: 'Messagerie et e-mails', icon: '✉', link: '/admin/messagerie', roles: ['ADMIN', 'CHEF_DEPARTEMENT'] }
   ] }
 ];
 

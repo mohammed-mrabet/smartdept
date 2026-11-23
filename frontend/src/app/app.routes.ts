@@ -7,13 +7,19 @@ const MANAGERS = ['ADMIN', 'CHEF_DEPARTEMENT'];
 const TEACHERS = ['ADMIN', 'CHEF_DEPARTEMENT', 'ENSEIGNANT'];
 
 export const routes: Routes = [
+  // ---------- pages publiques (sans connexion)
+  { path: '', pathMatch: 'full', loadComponent: () => import('./pages/public/landing').then(m => m.Landing), title: 'SmartDept · Département informatique FSO Oujda' },
   { path: 'connexion', loadComponent: () => import('./pages/login/login').then(m => m.Login), title: 'Connexion · SmartDept' },
+  { path: 'inscription', loadComponent: () => import('./pages/public/account-pages').then(m => m.Register), title: 'Inscription · SmartDept' },
+  { path: 'verifier-email', loadComponent: () => import('./pages/public/account-pages').then(m => m.VerifyEmail), title: 'Confirmation de l’adresse · SmartDept' },
+  { path: 'mot-de-passe-oublie', loadComponent: () => import('./pages/public/account-pages').then(m => m.ForgotPassword), title: 'Mot de passe oublié · SmartDept' },
+  { path: 'reinitialiser-mot-de-passe', loadComponent: () => import('./pages/public/account-pages').then(m => m.ResetPassword), title: 'Nouveau mot de passe · SmartDept' },
+  // ---------- espace connecté
   {
     path: '',
     component: Shell,
     canActivate: [authGuard],
     children: [
-      { path: '', pathMatch: 'full', redirectTo: 'tableau-de-bord' },
       { path: 'tableau-de-bord', loadComponent: () => import('./pages/dashboard/dashboard').then(m => m.Dashboard), title: 'Tableau de bord · SmartDept' },
       { path: 'pfe/sujets', loadComponent: () => import('./pages/pfe/subjects/subject-list').then(m => m.SubjectList), title: 'Sujets de PFE · SmartDept' },
       {
@@ -79,6 +85,10 @@ export const routes: Routes = [
       {
         path: 'admin/utilisateurs', canActivate: [roleGuard], data: { roles: MANAGERS },
         loadComponent: () => import('./pages/admin/users').then(m => m.Users), title: 'Utilisateurs · SmartDept'
+      },
+      {
+        path: 'admin/messagerie', canActivate: [roleGuard], data: { roles: MANAGERS },
+        loadComponent: () => import('./pages/admin/messaging').then(m => m.Messaging), title: 'Messagerie · SmartDept'
       }
     ]
   },

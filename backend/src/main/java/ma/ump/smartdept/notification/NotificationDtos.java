@@ -13,10 +13,10 @@ public final class NotificationDtos {
 
     public record NotificationResponse(Long id, NotificationType type, String title, String message, String link,
                                        boolean read, LocalDateTime readAt, EmailStatus emailStatus,
-                                       LocalDateTime createdAt) {
+                                       MailChannel emailChannel, String emailInfo, LocalDateTime createdAt) {
         public static NotificationResponse of(Notification n) {
             return new NotificationResponse(n.getId(), n.getType(), n.getTitle(), n.getMessage(), n.getLink(),
-                    n.isRead(), n.getReadAt(), n.getEmailStatus(), n.getCreatedAt());
+                    n.isRead(), n.getReadAt(), n.getEmailStatus(), n.getEmailChannel(), n.getEmailInfo(), n.getCreatedAt());
         }
     }
 

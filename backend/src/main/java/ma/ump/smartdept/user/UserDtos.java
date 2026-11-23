@@ -89,7 +89,7 @@ public final class UserDtos {
     }
 
     public record FiliereResponse(Long id, String code, String name, String level, String description,
-                                  ma.ump.smartdept.common.StudyLevel studyLevel) {
+                                  ma.ump.smartdept.common.StudyLevel studyLevel) implements java.io.Serializable {
         public static FiliereResponse of(Filiere f) {
             return new FiliereResponse(f.getId(), f.getCode(), f.getName(), f.getLevel(), f.getDescription(), f.getStudyLevel());
         }

@@ -1,6 +1,7 @@
 # Modèle des secrets : ansible-vault create group_vars/vault.yml puis copier/adapter ces lignes
 vault_mysql_root_password: "mot-de-passe-solide"
 vault_jwt_secret: "chaine-aleatoire-de-64-caracteres"
+vault_smtp_password: "mot-de-passe-application-gmail-ou-cle-smtp-brevo"
 vault_ai_api_key: "gsk_..."
 vault_adzuna_app_id: ""
 vault_adzuna_app_key: ""

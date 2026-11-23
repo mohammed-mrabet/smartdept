@@ -2,21 +2,21 @@
 
 Application web du département informatique de la Faculté des Sciences d'Oujda :
 **projets de fin d'études**, **offres de stage multi-pays** (Bac+2 à Bac+5), **scolarité**
-(emploi du temps, examens, notes, absences, suivi des étudiants), **notifications dans l'application
-et par e-mail**, **assistant IA gratuit**, et une chaîne **DevOps** complète (Docker, Kubernetes,
+(emploi du temps, examens, notes, absences, suivi des étudiants), **accueil public avec inscription**,
+**notifications dans l'application et par e-mail réel (SMTP) ou de test (Mailpit)**, **cache Redis**, **assistant IA gratuit**, et une chaîne **DevOps** complète (Docker, Kubernetes,
 Jenkins, GitHub Actions, Terraform, Ansible, Azure, Prometheus, Grafana, ELK).
 
 Projet individuel — Mohammed Mrabet, Master 2026 (module Génie logiciel / DevOps).
 
 | Couche | Technologies |
 | --- | --- |
-| Backend | Java 21, Spring Boot 4.1, Spring Security + JWT, Spring Data JPA, Flyway, Spring Mail, Actuator + Micrometer, springdoc OpenAPI |
-| Base de données | MySQL 8 (H2 en mode MySQL pour les tests) |
+| Backend | Java 21, Spring Boot 4.1, Spring Security + JWT, Spring Data JPA, Flyway, Spring Mail (SMTP réel + Mailpit), Spring Cache + Redis, Actuator + Micrometer, springdoc OpenAPI |
+| Données | MySQL 8 (H2 en mode MySQL pour les tests), Redis 7 (cache et compteurs anti-abus) |
 | Frontend | Angular 22 (composants standalone, signals, lazy loading), Vitest |
 | IA | API compatible OpenAI : Ollama (local), Groq ou Gemini (gratuits), avec repli sur un moteur local sans clé |
 | DevOps | Docker, Docker Compose, Kubernetes (Kustomize, HPA, Ingress), Jenkins, GitHub Actions, Trivy + SBOM, Terraform (Azure), Ansible, Prometheus, Alertmanager, Grafana, Elasticsearch + Kibana + Filebeat |
 
-![Offres de stage](docs/captures/10-offres-etudiant.png)
+![Accueil public](docs/captures/30-accueil.png)
 
 ---
 
@@ -86,7 +86,59 @@ Sujets validés par le chef, candidatures sur 3 sujets classés, **affectation a
 évaluation des livrables, soutenances (conflits de salle et de jury, **jury suggéré par l'IA**, note et mention),
 conventions de stage imprimables.
 
-### 1.4 Notifications et IA
+### 1.4 Accueil public, inscription et comptes
+
+- **Accueil** (`/`) visible sans connexion : services, chiffres en direct, dernières offres (sans lien de
+  candidature), offres par niveau et par pays, parcours en 4 étapes, FAQ, formulaire de contact.
+- **Inscription étudiant** (`/inscription`) : filière, compétences, force du mot de passe ; le compte est activé
+  par un **lien reçu par e-mail** (24 h, usage unique) qui connecte directement l'étudiant.
+- **Mot de passe oublié** : lien valable 1 h. Réponses identiques que le compte existe ou non.
+- **Sécurité** : jetons de 256 bits dont seule l'empreinte SHA-256 est stockée ; limitation des tentatives
+  (10 connexions / 15 min par adresse, 5 inscriptions, renvois, demandes ou messages par heure et par IP),
+  champ piège anti-robot sur le contact.
+- **Messagerie** (`/admin/messagerie`, chef et admin) : configuration SMTP, aperçu du canal pour une adresse,
+  envoi d'un e-mail de test, messages reçus depuis l'accueil (à traiter / traités).
+
+| | |
+| --- | --- |
+| ![Inscription](docs/captures/31-inscription.png) | ![Messagerie](docs/captures/33-messagerie.png) |
+
+### 1.5 E-mails réels et Mailpit
+
+Le routeur d'e-mails choisit le canal pour chaque destinataire :
+
+| Destinataire | Canal |
+| --- | --- |
+| adresse réelle (`@gmail.com`, `@outlook.com`, `@ump.ac.ma`…) et SMTP configuré | **SMTP réel** |
+| adresse de démonstration (`@smartdept.ma`, `@exemple.ma`, `example.com`, `.test`…) | Mailpit |
+| adresse invalide ou domaine sans serveur de messagerie (vérification MX) | Mailpit |
+| aucun `SMTP_HOST` renseigné, ou `MAIL_MODE=sandbox` | Mailpit |
+| le SMTP réel refuse l'envoi | copie « [non délivré] » dans Mailpit, erreur visible dans la notification |
+
+Configuration dans `.env` :
+
+```bash
+# Gmail : validation en 2 étapes + mot de passe d'application (myaccount.google.com/apppasswords), ~500 e-mails/jour
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USERNAME=votre.adresse@gmail.com
+SMTP_PASSWORD=abcdefghijklmnop
+# ou Brevo (gratuit, 300 e-mails/jour) : SMTP_HOST=smtp-relay.brevo.com + identifiant et clé SMTP + MAIL_FROM vérifié
+```
+
+Un compte **Outlook.com** personnel n'est pas conseillé comme *expéditeur* : Microsoft retire l'authentification
+SMTP par mot de passe au profit d'OAuth. Les adresses Outlook **reçoivent** sans problème les e-mails envoyés par
+Gmail ou Brevo. La page « Notifications » indique pour chaque e-mail le canal utilisé (SMTP ou Mailpit).
+
+### 1.6 Cache Redis
+
+`spring-boot-starter-cache` + Redis (`CACHE_TYPE=redis`) : filières, statistiques et facettes des offres,
+statistiques et offres de l'accueil (durée de vie 10 min, préfixe `smartdept::`). Les caches des offres sont
+vidés après chaque synchronisation ou publication. Les compteurs de limitation des tentatives sont aussi dans
+Redis (`INCR` + `EXPIRE`), partagés entre plusieurs réplicas du backend. Si Redis tombe, l'application continue
+(le cache est ignoré, les compteurs repassent en mémoire). Sans Docker (XAMPP), `CACHE_TYPE=simple` par défaut.
+
+### 1.7 Notifications et IA
 
 Chaque événement crée une notification dans l'application (cloche, page dédiée) et un e-mail HTML envoyé
 après la validation de la transaction. L'assistant IA (Ollama, Groq ou Gemini) améliore les sujets,
@@ -115,15 +167,20 @@ de la semaine en cours, des examens, des notes, des absences et 24 offres de dé
 ### Option A — Docker
 
 ```bash
-cp .env.example .env              # facultatif : clés IA et API d'offres
+cp .env.example .env              # facultatif : SMTP réel, clés IA et API d'offres
 docker compose up -d --build
 ```
 
 | URL | Service |
 | --- | --- |
-| http://localhost | application |
+| http://localhost | accueil public, inscription et application |
 | http://localhost:8080/swagger-ui.html | documentation de l'API |
-| http://localhost:8025 | Mailpit : e-mails envoyés par l'application |
+| http://localhost:8025 | Mailpit : e-mails de test (adresses de démonstration ou invalides) |
+| localhost:6379 | Redis (`docker compose exec redis redis-cli keys 'smartdept::*'`) |
+
+Au premier démarrage, MySQL 8.4 affiche des avertissements `'VALUES function' is deprecated` pendant le
+chargement des données de démonstration : ils sont sans effet. La syntaxe `VALUES()` est gardée exprès, car la
+syntaxe de remplacement (`INSERT … AS alias`) n'existe pas dans MariaDB, la base fournie avec XAMPP (option B).
 
 Supervision complète : `docker compose -f docker-compose.yml -f docker-compose.observability.yml up -d`
 
@@ -216,6 +273,8 @@ cd frontend && npm test
 - **Scolarité** : calcul des notes et compensation, planificateur d'emploi du temps (aucun conflit, TP en
   laboratoire, répartition sur la semaine), planificateur d'examens, score de risque, intégration H2
   (conflits 409, séries, planification, appel et avertissements, relevé).
+- **Comptes et e-mails** : routage SMTP / Mailpit, limitation des tentatives (mémoire et repli si Redis
+  est absent), inscription → confirmation → connexion, mot de passe oublié, force du mot de passe (Vitest).
 - **PFE** : règles des sujets, candidatures, jalons, soutenances, conventions, parcours complet sur H2.
 
 ## 5. Correspondance avec les TP du module
@@ -228,7 +287,7 @@ cd frontend && npm test
 | TP3-1 Docker / Docker Hub | Dockerfiles multi-étapes (backend sans droits root), publication automatique |
 | TP3-2 Kubernetes / Docker Compose | `k8s/` (Kustomize, StatefulSet, HPA, Ingress, NetworkPolicy), `docker-compose*.yml` |
 | TP4 Azure | VM Ubuntu sur Azure, déploiement par Ansible |
-| TP5 Flyway | `V1` à `V3` + données de démonstration répétables |
+| TP5 Flyway | `V1` à `V4` + données de démonstration répétables |
 | TP6 Jenkins | `Jenkinsfile`, image Jenkins prête (`jenkins/`) |
 | TP7 GitHub Actions | `.github/workflows/ci.yml` |
 | TP8 Terraform | `terraform/azure` (réseau, pare-feu, IP, VM, inventaire Ansible généré) |
@@ -242,10 +301,11 @@ backend/src/main/java/ma/ump/smartdept
 ├── offers/        offres : fournisseurs d'API, classification, synchronisation, alertes, IA, suivi
 ├── academic/      scolarité : salles, modules, séances, examens, notes, absences, planificateurs, risques
 ├── pfe/           sujets, candidatures, projets, jalons, soutenances, conventions
-├── notification/  notifications et e-mails asynchrones
+├── notification/  notifications, routeur d'e-mails (SMTP réel / Mailpit), modèles HTML
+├── publicsite/    API publique de l'accueil, contact, messagerie de l'administration
 ├── ai/            client IA compatible OpenAI, moteur local, chatbot
 ├── user/ security/ common/ config/
-frontend/src/app/pages   offers/ · academic/ · pfe/ · dashboard/ · notifications/ · profile/ · admin/
+frontend/src/app/pages   public/ (accueil, inscription, mot de passe) · offers/ · academic/ · pfe/ · dashboard/ · notifications/ · profile/ · admin/
 k8s/ · terraform/azure/ · ansible/ · jenkins/ · monitoring/ · docs/uml/ · docs/captures/
 ```
 
@@ -257,5 +317,6 @@ chaîne de déploiement, séquence « acceptation d'une candidature ».
 - **Étape 1** : PFE, notifications, IA, Docker, GitHub Actions — livrée.
 - **Étape 2** : scolarité (emploi du temps, examens, notes, absences, planification, suivi des étudiants) — livrée.
 - **Étape 3** : offres de stage multi-pays, Kubernetes, Jenkins, Terraform, Ansible, Azure, Prometheus, Grafana, ELK — livrée.
+- **Étape 4** : accueil public, inscription avec confirmation par e-mail, e-mails réels (SMTP) + Mailpit, Redis — livrée.
 - Pistes : dépôt de pièces jointes (CV, justificatifs) sur un stockage objet, application mobile, authentification
   universitaire (SSO).

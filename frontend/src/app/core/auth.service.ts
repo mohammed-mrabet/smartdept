@@ -28,10 +28,13 @@ export class AuthService {
   }
 
   login(email: string, password: string): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>('/api/auth/login', { email, password }).pipe(tap(res => {
-      localStorage.setItem(TOKEN_KEY, res.token);
-      this.setUser(res.user);
-    }));
+    return this.http.post<LoginResponse>('/api/auth/login', { email, password }).pipe(tap(res => this.startSession(res)));
+  }
+
+  /** Ouvre la session à partir d'une réponse de connexion (connexion ou lien de confirmation de l'e-mail). */
+  startSession(res: LoginResponse): void {
+    localStorage.setItem(TOKEN_KEY, res.token);
+    this.setUser(res.user);
   }
 
   refreshMe(): Observable<User> {
