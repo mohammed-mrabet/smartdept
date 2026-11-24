@@ -1,12 +1,86 @@
-# SmartDept — plateforme du département informatique
+<div align="center">
 
-Application web du département informatique de la Faculté des Sciences d'Oujda :
-**projets de fin d'études**, **offres de stage multi-pays** (Bac+2 à Bac+5), **scolarité**
-(emploi du temps, examens, notes, absences, suivi des étudiants), **accueil public avec inscription**,
-**notifications dans l'application et par e-mail réel (SMTP) ou de test (Mailpit)**, **cache Redis**, **assistant IA gratuit**, et une chaîne **DevOps** complète (Docker, Kubernetes,
-Jenkins, GitHub Actions, Terraform, Ansible, Azure, Prometheus, Grafana, ELK).
+# 🎓 SmartDept
 
-Projet individuel — Mohammed Mrabet, Master 2026 (module Génie logiciel / DevOps).
+**Plateforme de gestion du département informatique — stages, PFE, scolarité et DevOps**
+
+[![CI/CD](https://github.com/mohammed-mrabet/smartdept/actions/workflows/ci.yml/badge.svg)](https://github.com/mohammed-mrabet/smartdept/actions/workflows/ci.yml)
+![Java](https://img.shields.io/badge/Java-21-orange?logo=openjdk&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1-6DB33F?logo=springboot&logoColor=white)
+![Angular](https://img.shields.io/badge/Angular-22-DD0031?logo=angular&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-8-4479A1?logo=mysql&logoColor=white)
+![Redis](https://img.shields.io/badge/Redis-7-DC382D?logo=redis&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)
+![Kubernetes](https://img.shields.io/badge/Kubernetes-Kustomize-326CE5?logo=kubernetes&logoColor=white)
+![Terraform](https://img.shields.io/badge/Terraform-Azure-7B42BC?logo=terraform&logoColor=white)
+
+[Fonctionnalités](#1-fonctionnalités) · [Démarrage rapide](#-démarrage-rapide) · [Lancer le projet](#2-lancer-le-projet) · [Déploiement](#3-étape-3--déploiement) · [Tests](#4-tests-et-qualité) · [Architecture](#6-architecture)
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/captures/00-accueil-sombre.png">
+  <img alt="Page d'accueil de SmartDept" src="docs/captures/00-accueil-clair.png" width="900">
+</picture>
+
+<sub>Captures réalisées avec les données de démonstration.</sub>
+
+</div>
+
+## ✨ En bref
+
+SmartDept est l'application web du **département informatique de la Faculté des Sciences d'Oujda** (Université Mohammed Premier).
+Elle réunit en un seul endroit ce dont ont besoin les étudiants, les enseignants et le chef de département :
+
+| | |
+| --- | --- |
+| 💼 **Offres de stage réelles** | 9 API gratuites (Maroc, France, Canada, Belgique, Espagne, télétravail), filtrées sur l'informatique, de Bac+2 à Bac+5, avec score de compatibilité et alertes e-mail |
+| 🎓 **Projets de fin d'études** | sujets, candidatures par préférence, affectation automatique, jalons notés, jury et soutenances |
+| 🗓 **Scolarité** | emploi du temps généré sans conflit, examens, notes, moyennes, absences, suivi des étudiants en difficulté |
+| 🌐 **Accueil public** | présentation des services, inscription étudiant avec confirmation par e-mail, contact |
+| ✉️ **E-mails** | SMTP réel (Gmail, Brevo…) pour les vraies adresses, Mailpit pour les adresses de test |
+| 🤖 **IA gratuite** | amélioration des sujets, suggestions, chatbot (Groq, Gemini ou Ollama, repli local sans clé) |
+| 🌙 **Confort** | mode sombre, interface responsive, cache Redis |
+| ⚙️ **DevOps** | Docker, Kubernetes, Jenkins, GitHub Actions, Trivy, Terraform (Azure), Ansible, Prometheus, Grafana, ELK |
+
+<table>
+  <tr>
+    <td><img src="docs/captures/10-offres-etudiant.png" alt="Offres de stage" width="420"></td>
+    <td><img src="docs/captures/15-emploi-du-temps.png" alt="Emploi du temps" width="420"></td>
+  </tr>
+  <tr>
+    <td align="center"><sub>Offres de stage recommandées</sub></td>
+    <td align="center"><sub>Emploi du temps généré</sub></td>
+  </tr>
+  <tr>
+    <td><img src="docs/captures/02-dashboard-chef.png" alt="Tableau de bord du chef de département" width="420"></td>
+    <td><img src="docs/captures/40-offres-sombre.png" alt="Mode sombre" width="420"></td>
+  </tr>
+  <tr>
+    <td align="center"><sub>Tableau de bord du chef de département</sub></td>
+    <td align="center"><sub>Mode sombre</sub></td>
+  </tr>
+</table>
+
+## 🚀 Démarrage rapide
+
+Prérequis : [Docker Desktop](https://www.docker.com/products/docker-desktop/).
+
+```bash
+git clone https://github.com/mohammed-mrabet/smartdept.git
+cd smartdept
+cp .env.example .env        # facultatif : SMTP, clés IA et API d'offres
+docker compose up -d --build
+```
+
+| Adresse | Service |
+| --- | --- |
+| http://localhost | application (accueil public) |
+| http://localhost:8080/swagger-ui.html | documentation de l'API |
+| http://localhost:8025 | Mailpit (e-mails de test) |
+
+Comptes de démonstration (mot de passe `Demo@2026`) : `chef@smartdept.ma`, `admin@smartdept.ma`,
+`n.alami@smartdept.ma` (enseignante), `omar.tazi@etu.smartdept.ma` (étudiant). La liste complète est plus bas.
+
+## 🧱 Technologies
 
 | Couche | Technologies |
 | --- | --- |
@@ -15,8 +89,6 @@ Projet individuel — Mohammed Mrabet, Master 2026 (module Génie logiciel / Dev
 | Frontend | Angular 22 (composants standalone, signals, lazy loading), Vitest |
 | IA | API compatible OpenAI : Ollama (local), Groq ou Gemini (gratuits), avec repli sur un moteur local sans clé |
 | DevOps | Docker, Docker Compose, Kubernetes (Kustomize, HPA, Ingress), Jenkins, GitHub Actions, Trivy + SBOM, Terraform (Azure), Ansible, Prometheus, Alertmanager, Grafana, Elasticsearch + Kibana + Filebeat |
-
-![Accueil public](docs/captures/30-accueil.png)
 
 ---
 
@@ -344,3 +416,14 @@ chaîne de déploiement, séquence « acceptation d'une candidature ».
 - **Étape 4** : accueil public, inscription avec confirmation par e-mail, e-mails réels (SMTP) + Mailpit, Redis — livrée.
 - Pistes : dépôt de pièces jointes (CV, justificatifs) sur un stockage objet, application mobile, authentification
   universitaire (SSO).
+
+---
+
+## 👤 Auteur
+
+**Mohammed MRABET** — Master, Faculté des Sciences d'Oujda (Université Mohammed Premier), 2026
+GitHub : [@mohammed-mrabet](https://github.com/mohammed-mrabet)
+
+Projet individuel réalisé dans le cadre du module Génie logiciel / DevOps.
+Une partie du code a été écrite avec l'aide d'un assistant IA (Claude, Anthropic) ;
+la conception, les choix techniques, les tests et l'intégration ont été faits et vérifiés par moi.
