@@ -78,7 +78,7 @@ import { Badge } from '../../../shared/badge';
     .doc h3 { margin-bottom: 4px; }
     .signs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 40px; text-align: center; font-weight: 650; font-size: 13px; }
     .signs span { display: block; height: 70px; border-bottom: 1px dashed #9aa5b8; }
-    .review { max-width: 860px; margin-left: auto; margin-right: auto; border-color: #f6dcb0; }
+    .review { max-width: 860px; margin-left: auto; margin-right: auto; border-color: var(--border-strong); }
     @media (max-width: 700px) { .doc { padding: 22px 18px; } .signs { grid-template-columns: 1fr; } }
   `]
 })

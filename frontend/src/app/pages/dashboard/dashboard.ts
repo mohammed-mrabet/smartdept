@@ -195,12 +195,12 @@ interface ReviewItem { project: Project; milestone: Milestone; }
     </div>
   `,
   styles: [`
-    .line { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 0; border-bottom: 1px solid #eef1f6; color: inherit; text-decoration: none !important; }
+    .line { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--border-soft); color: inherit; text-decoration: none !important; }
     .line:last-child { border-bottom: 0; }
     .line:hover strong { color: var(--primary-2); }
     .grow { flex: 1; min-width: 0; }
     .mt-sm { margin-top: 6px; }
-    .hero-card { background: linear-gradient(135deg, #fff, #f1f5ff); }
+    .hero-card { background: linear-gradient(135deg, var(--surface), var(--highlight)); }
     .eyebrow { display: block; margin-bottom: 4px; color: var(--primary-2); font-size: 11.5px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
     .date-box { width: 50px; text-align: center; border-radius: 10px; background: var(--primary-soft); color: var(--primary-2); padding: 6px 0; line-height: 1.1; flex: none; }
     .date-box small { display: block; font-size: 11px; text-transform: uppercase; }

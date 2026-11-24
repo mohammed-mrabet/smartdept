@@ -23,7 +23,7 @@ import {
           <span class="eyebrow">Stages · PFE · Alternance · Premier emploi</span>
           <h1>Trouvez le stage qui correspond à votre niveau</h1>
           <p>Offres du Maroc, de France, du Canada, de Belgique, d’Espagne et en télétravail, rassemblées depuis
-            {{ sourceCount() }} sources et mises à jour toutes les 6 heures.</p>
+            {{ sourceCount() }} {{ sourceCount() > 1 ? 'sources' : 'source' }} et mises à jour toutes les 6 heures.</p>
         </div>
         <form class="search" (ngSubmit)="apply()">
           <span class="ico">⌕</span>
@@ -129,6 +129,7 @@ import {
                 </div>
                 <div class="foot">
                   <span class="src" [class.internal]="o.internal">{{ o.internal ? '🏛 Offre du département' : 'via ' + o.sourceLabel }}</span>
+                  @if (isDemo(o)) { <span class="badge gray">Démo</span> }
                   <span class="muted">{{ ago(o.publishedAt) }}</span>
                   @if (o.tracking) { <span class="badge blue">{{ trackingLabel(o.tracking) }}</span> }
                   <button class="star" [class.on]="!!o.tracking" (click)="toggleSave(o, $event)" [attr.aria-label]="o.tracking ? 'Retirer du suivi' : 'Enregistrer'">{{ o.tracking ? '★' : '☆' }}</button>
@@ -167,6 +168,10 @@ import {
               <div><small>Publiée</small><strong>{{ date(o.publishedAt) }}</strong></div>
               <div><small>Lieu</small><strong>{{ o.remote ? 'Télétravail possible' : 'Sur site' }}</strong></div>
             </div>
+            @if (isDemo(o)) {
+              <div class="alert warn demo-note">Offre de <b>démonstration</b> : l’entreprise est fictive, on ne peut pas y postuler.
+                Les vraies offres (avec le bouton « Postuler sur le site ») arrivent des API à chaque synchronisation.</div>
+            }
             <div class="actions-row">
               @if (o.url) { <a class="btn btn-primary" [href]="o.url" target="_blank" rel="noopener">Postuler sur le site ↗</a> }
               @if (o.contactEmail) { <a class="btn btn-ghost" [href]="'mailto:' + o.contactEmail + '?subject=' + encode('Candidature : ' + o.title)">✉ Écrire au recruteur</a> }
@@ -255,6 +260,7 @@ import {
     </div>
   `,
   styles: [`
+    .demo-note { margin: 4px 0 12px; font-size: 13.5px; }
     .offers-page { max-width: 1380px; }
     .hero { border-radius: 20px; padding: 30px 32px 22px; color: #e8eefc; background:
       radial-gradient(circle at 85% 0%, rgba(109, 63, 192, .55) 0, transparent 45%),
@@ -262,7 +268,7 @@ import {
     .hero h1 { color: #fff; font-size: 28px; margin-top: 4px; }
     .hero p { color: #c6d2f0; max-width: 760px; margin-top: 6px; }
     .hero .eyebrow { color: #9fd8ce; font-size: 11.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
-    .search { margin-top: 18px; display: flex; gap: 8px; align-items: center; background: #fff; border-radius: 14px; padding: 6px; box-shadow: 0 12px 30px rgba(0, 0, 0, .2); }
+    .search { margin-top: 18px; display: flex; gap: 8px; align-items: center; background: var(--surface); border-radius: 14px; padding: 6px; box-shadow: 0 12px 30px rgba(0, 0, 0, .2); }
     .search .ico { font-size: 20px; color: var(--muted); padding: 0 4px 0 10px; }
     .search input { flex: 1; border: 0; outline: 0; font: inherit; font-size: 15px; min-width: 0; color: var(--text); background: transparent; }
     .search select { border: 0; border-left: 1px solid var(--border); padding: 8px 10px; font: inherit; background: transparent; color: var(--text); max-width: 170px; }
@@ -270,8 +276,8 @@ import {
     .light { color: #dbe5ff !important; } .light:hover { color: #fff !important; }
     .sep { color: #6f80a8; }
     .levels { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin: 18px 0 12px; }
-    .level { position: relative; text-align: left; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--border); background: #fff; cursor: pointer; font: inherit; color: inherit; transition: .15s; }
-    .level:hover { border-color: #b9c8ea; }
+    .level { position: relative; text-align: left; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); cursor: pointer; font: inherit; color: inherit; transition: .15s; }
+    .level:hover { border-color: var(--border-strong); }
     .level.on { border-color: var(--primary-2); background: var(--primary-soft); box-shadow: 0 0 0 1px var(--primary-2) inset; }
     .level strong { font-size: 16px; } .level small { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
     .level .count { position: absolute; top: 10px; right: 12px; font-size: 12px; font-weight: 700; color: var(--primary-2); }
@@ -279,22 +285,22 @@ import {
     .me { font-size: 10.5px; font-weight: 800; text-transform: uppercase; color: var(--teal); background: var(--teal-soft); border-radius: 999px; padding: 1px 7px; }
     .filters { display: grid; gap: 8px; margin-bottom: 14px; }
     .chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
-    .fchip { border: 1px solid var(--border); background: #fff; border-radius: 999px; padding: 6px 12px; font: 600 13px var(--font); cursor: pointer; color: var(--text-2); display: inline-flex; gap: 6px; align-items: center; }
+    .fchip { border: 1px solid var(--border); background: var(--surface); border-radius: 999px; padding: 6px 12px; font: 600 13px var(--font); cursor: pointer; color: var(--text-2); display: inline-flex; gap: 6px; align-items: center; }
     .fchip em { font-style: normal; font-size: 11.5px; color: var(--muted); }
     .fchip.on { background: var(--text); color: #fff; border-color: var(--text); } .fchip.on em { color: #c8d0e0; }
     .fchip.check { cursor: pointer; }
     .slim { height: 34px; padding: 4px 10px; font-size: 13px; width: auto; }
     .reco { margin-bottom: 16px; } .reco h2 { font-size: 16px; }
     .reco-row { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(220px, 1fr); gap: 10px; overflow-x: auto; padding: 10px 2px 6px; }
-    .reco-card { text-align: left; border: 1px solid #ddd2f3; border-radius: 12px; padding: 12px; background: linear-gradient(180deg, #faf7ff, #fff); cursor: pointer; font: inherit; color: inherit; display: grid; gap: 4px; }
+    .reco-card { text-align: left; border: 1px solid var(--violet-border); border-radius: 12px; padding: 12px; background: linear-gradient(180deg, var(--violet-tint), var(--surface)); cursor: pointer; font: inherit; color: inherit; display: grid; gap: 4px; }
     .reco-card strong { font-size: 13.5px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
     .reco-card small { color: var(--muted); }
     .results { display: grid; grid-template-columns: 1fr; gap: 16px; align-items: start; }
     .results.with-detail { grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); }
     .list { display: grid; gap: 10px; }
     .list-head { color: var(--text-2); font-size: 13.5px; display: flex; gap: 8px; align-items: center; }
-    .ocard { display: flex; gap: 14px; padding: 14px 16px; background: #fff; border: 1px solid var(--border); border-radius: 14px; cursor: pointer; transition: .15s; }
-    .ocard:hover { border-color: #b9c8ea; box-shadow: 0 6px 18px rgba(15, 23, 42, .06); }
+    .ocard { display: flex; gap: 14px; padding: 14px 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; cursor: pointer; transition: .15s; }
+    .ocard:hover { border-color: var(--border-strong); box-shadow: 0 6px 18px rgba(15, 23, 42, .06); }
     .ocard.active { border-color: var(--primary-2); box-shadow: 0 0 0 1px var(--primary-2) inset; }
     .avatar { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; color: #fff; font-weight: 800; flex: none; letter-spacing: .02em; }
     .avatar.lg { width: 56px; height: 56px; font-size: 18px; border-radius: 14px; }
@@ -306,10 +312,10 @@ import {
     .tags .chip { margin: 0; }
     .foot { display: flex; gap: 10px; align-items: center; margin-top: 10px; font-size: 12.5px; }
     .src { color: var(--muted); } .src.internal { color: var(--teal); font-weight: 650; }
-    .star { margin-left: auto; border: 0; background: none; font-size: 19px; cursor: pointer; color: #b6bfd0; line-height: 1; }
+    .star { margin-left: auto; border: 0; background: none; font-size: 19px; cursor: pointer; color: var(--muted); line-height: 1; }
     .star.on { color: #f0a500; }
     .ring { --p: 0; flex: none; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; font-size: 11.5px; font-weight: 800; color: var(--text);
-      background: radial-gradient(closest-side, #fff 78%, transparent 80% 100%), conic-gradient(var(--teal) calc(var(--p) * 1%), #e6ebf3 0); }
+      background: radial-gradient(closest-side, var(--surface) 78%, transparent 80% 100%), conic-gradient(var(--teal) calc(var(--p) * 1%), var(--track) 0); }
     .ring.sm { width: 34px; height: 34px; font-size: 11px; } .ring.lg { width: 64px; height: 64px; font-size: 16px; }
     .more { justify-self: center; }
     .detail { position: sticky; top: 80px; max-height: calc(100vh - 100px); overflow-y: auto; padding: 22px 24px; }
@@ -320,7 +326,7 @@ import {
     .facts div { background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; }
     .facts small { display: block; color: var(--muted); font-size: 11.5px; } .facts strong { font-size: 13.5px; }
     .actions-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-    .ai-box { margin-top: 16px; padding: 14px; border-radius: 12px; border: 1px solid #ddd2f3; background: linear-gradient(180deg, #faf7ff, #fff); }
+    .ai-box { margin-top: 16px; padding: 14px; border-radius: 12px; border: 1px solid var(--violet-border); background: linear-gradient(180deg, var(--violet-tint), var(--surface)); }
     .match { display: flex; gap: 14px; align-items: center; margin-top: 10px; }
     .chip.ok { background: var(--teal-soft); color: var(--teal); } .chip.ko { background: var(--amber-soft); color: var(--amber); }
     .advice { margin: 10px 0 0; padding-left: 18px; font-size: 13.5px; color: var(--text-2); }
@@ -330,7 +336,7 @@ import {
     .wide { width: min(760px, 100%); }
     .letter { width: 100%; font: 14px/1.6 var(--font); border: 1px solid var(--border); border-radius: 10px; padding: 12px; }
     .criteria { margin: 12px 0 0; padding-left: 18px; font-size: 14px; color: var(--text-2); }
-    .spinner-inline { width: 14px; height: 14px; border: 2px solid #cfd8ea; border-top-color: var(--primary-2); border-radius: 50%; animation: spin .8s linear infinite; }
+    .spinner-inline { width: 14px; height: 14px; border: 2px solid var(--border-strong); border-top-color: var(--primary-2); border-radius: 50%; animation: spin .8s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
     @media (max-width: 1100px) {
       .results.with-detail { grid-template-columns: 1fr; }
@@ -540,6 +546,11 @@ export class Offers implements OnInit {
   init = initials;
   ago(d?: string): string { return d ? timeAgo(d + (d.length === 10 ? 'T12:00:00' : '')) : ''; }
   date(d?: string): string { return frDate(d); }
+  /** Offres de démonstration livrées avec le projet (entreprises fictives, sans vraie candidature possible). */
+  isDemo(o: { company?: string }): boolean {
+    return /\b(fictive|fictif|fictional|ficticia|ficticio)\b/i.test(o.company ?? '');
+  }
+
   encode(s: string): string { return encodeURIComponent(s); }
   flag(c: string): string { return COUNTRY_FLAG[c] ?? ''; }
 }

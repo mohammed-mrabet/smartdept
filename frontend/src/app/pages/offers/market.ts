@@ -125,11 +125,11 @@ import { COUNTRY_FLAG, COUNTRY_LABEL, KIND_LABEL, Offer, OfferApi, OfferSource, 
   `,
   styles: [`
     .eyebrow { display: block; margin-bottom: 6px; color: var(--primary-2); font-size: 11.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
-    .tabs { display: inline-flex; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: #fff; margin-bottom: 16px; }
+    .tabs { display: inline-flex; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: var(--surface); margin-bottom: 16px; }
     .tabs button { border: 0; background: none; padding: 9px 16px; font: 600 13.5px var(--font); cursor: pointer; color: var(--text-2); }
     .tabs button.on { background: var(--primary-soft); color: var(--primary-2); }
     .bar-row { display: grid; grid-template-columns: 130px 1fr 40px; gap: 10px; align-items: center; margin-top: 10px; font-size: 13.5px; }
-    .bar { height: 10px; background: #eef2f8; border-radius: 99px; overflow: hidden; }
+    .bar { height: 10px; background: var(--track); border-radius: 99px; overflow: hidden; }
     .bar i { display: block; height: 100%; background: var(--primary-2); border-radius: 99px; }
     .bar.violet i { background: var(--violet); } .bar.teal i { background: var(--teal); } .bar.amber i { background: #e0a100; }
     .bar-row b { text-align: right; }
@@ -138,7 +138,7 @@ import { COUNTRY_FLAG, COUNTRY_LABEL, KIND_LABEL, Offer, OfferApi, OfferSource, 
     .funnel { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 12px; }
     .funnel .step { background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: 14px; text-align: center; }
     .funnel strong { display: block; font-size: 24px; } .funnel small { color: var(--muted); }
-    .src.off { background: #fbfcfe; }
+    .src.off { background: var(--surface-2); }
     .flags { font-size: 20px; letter-spacing: 4px; margin: 6px 0; }
     .err { color: var(--red); }
     .block { display: block; margin-top: 6px; }

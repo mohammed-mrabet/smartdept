@@ -139,12 +139,12 @@ interface DayGroup { date: string; items: Defense[]; }
   `,
   styles: [`
     .eyebrow { display: block; margin-bottom: 6px; color: var(--primary-2); font-size: 11.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
-    .seg { display: inline-flex; border: 1px solid var(--border); border-radius: 9px; overflow: hidden; background: #fff; }
+    .seg { display: inline-flex; border: 1px solid var(--border); border-radius: 9px; overflow: hidden; background: var(--surface); }
     .seg button { border: 0; background: none; padding: 8px 14px; font: 600 13.5px var(--font); cursor: pointer; color: var(--text-2); }
     .seg button.on { background: var(--primary-soft); color: var(--primary-2); }
     .day { margin: 22px 0 10px; text-transform: capitalize; color: var(--text-2); }
     .defense { display: flex; gap: 18px; scroll-margin-top: 90px; }
-    .defense:target { box-shadow: 0 0 0 3px #c7d7ff; }
+    .defense:target { box-shadow: 0 0 0 3px var(--border-strong); }
     .defense.cancelled { opacity: .6; }
     .time { width: 74px; flex: none; text-align: center; border-right: 1px solid var(--border); padding-right: 14px; display: flex; flex-direction: column; }
     .time strong { font-size: 19px; } .time small { color: var(--muted); }
@@ -153,9 +153,9 @@ interface DayGroup { date: string; items: Defense[]; }
     .mt-xs { margin-top: 8px; }
     .wide { width: min(760px, 100%); }
     .jury { border: 1px solid var(--border); border-radius: 10px; max-height: 260px; overflow-y: auto; }
-    .jury-row { display: flex; gap: 12px; align-items: center; padding: 10px 12px; border-bottom: 1px solid #eef1f6; cursor: pointer; }
+    .jury-row { display: flex; gap: 12px; align-items: center; padding: 10px 12px; border-bottom: 1px solid var(--border-soft); cursor: pointer; }
     .jury-row:last-child { border-bottom: 0; }
-    .jury-row.busy { background: #fff8f7; }
+    .jury-row.busy { background: var(--red-soft); }
     .grow { flex: 1; }
   `]
 })

@@ -100,10 +100,10 @@ import { SUBJECT_TYPE, apiError } from '../../../core/labels';
   `,
   styles: [`
     .layout { grid-template-columns: minmax(0, 1.7fr) minmax(280px, 1fr); align-items: start; }
-    .ai { border-color: #dcd0f5; background: linear-gradient(180deg, #faf7ff, #fff 160px); }
-    .block { margin-top: 16px; padding-top: 14px; border-top: 1px dashed #d9cdef; }
+    .ai { border-color: var(--violet-border); background: linear-gradient(180deg, var(--violet-tint), var(--surface) 160px); }
+    .block { margin-top: 16px; padding-top: 14px; border-top: 1px dashed var(--violet-border); }
     .block ul { margin: 4px 0 10px; padding-left: 18px; font-size: 13.5px; }
-    .sv { padding: 10px 0; border-bottom: 1px solid #f0edf7; }
+    .sv { padding: 10px 0; border-bottom: 1px solid var(--border-soft); }
     .eyebrow { display: block; margin-bottom: 6px; color: var(--primary-2); font-size: 11.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
     @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
   `]

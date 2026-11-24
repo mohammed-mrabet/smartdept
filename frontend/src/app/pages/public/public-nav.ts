@@ -1,11 +1,12 @@
 import { Component, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../core/auth.service';
+import { ThemeToggle } from '../../shared/theme-toggle';
 
 /** Barre de navigation des pages publiques (accueil, inscription, mot de passe). */
 @Component({
   selector: 'app-public-nav',
-  imports: [RouterLink],
+  imports: [RouterLink, ThemeToggle],
   template: `
     <header class="pnav" [class.dark]="dark()">
       <div class="pnav-in">
@@ -20,6 +21,7 @@ import { AuthService } from '../../core/auth.service';
           </nav>
         }
         <div class="cta">
+          <app-theme-toggle [onDark]="dark()" />
           @if (auth.isLoggedIn()) {
             <a routerLink="/tableau-de-bord" class="btn btn-primary btn-sm">Mon espace →</a>
           } @else {
@@ -31,7 +33,7 @@ import { AuthService } from '../../core/auth.service';
     </header>
   `,
   styles: [`
-    .pnav { position: sticky; top: 0; z-index: 40; background: rgba(255,255,255,.86); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
+    .pnav { position: sticky; top: 0; z-index: 40; background: var(--nav-bg); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
     .pnav.dark { background: rgba(11, 21, 48, .82); border-bottom-color: rgba(255,255,255,.08); }
     .pnav-in { max-width: 1200px; margin: 0 auto; padding: 12px 20px; display: flex; align-items: center; gap: 24px; }
     .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 18px; color: var(--text); text-decoration: none !important; }
@@ -42,7 +44,7 @@ import { AuthService } from '../../core/auth.service';
     .dark .links a { color: #c3cde6; }
     .links a:hover { color: var(--primary-2); text-decoration: none; }
     .dark .links a:hover { color: #fff; }
-    .cta { display: flex; gap: 8px; margin-left: auto; }
+    .cta { display: flex; gap: 8px; margin-left: auto; align-items: center; }
     .ghost { background: transparent; color: var(--text); border-color: var(--border); }
     .dark .ghost { color: #fff; border-color: rgba(255,255,255,.25); }
     @media (max-width: 900px) { .links { display: none; } }

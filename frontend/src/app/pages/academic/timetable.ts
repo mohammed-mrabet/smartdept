@@ -107,7 +107,7 @@ type View = 'me' | 'filiere' | 'teacher' | 'room';
   styles: [`
     .wide { max-width: 1400px; }
     .eyebrow { display: block; margin-bottom: 6px; color: var(--primary-2); font-size: 11.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
-    .seg { display: inline-flex; border: 1px solid var(--border); border-radius: 9px; overflow: hidden; background: #fff; }
+    .seg { display: inline-flex; border: 1px solid var(--border); border-radius: 9px; overflow: hidden; background: var(--surface); }
     .seg button { border: 0; background: none; padding: 8px 14px; font: 600 13.5px var(--font); cursor: pointer; color: var(--text-2); }
     .seg button.on { background: var(--primary-soft); color: var(--primary-2); }
     .slim { width: auto; height: 36px; }

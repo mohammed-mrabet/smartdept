@@ -98,7 +98,7 @@ import { Badge } from '../../../shared/badge';
     .subject { display: flex; flex-direction: column; color: inherit; text-decoration: none !important; }
     .desc { margin-top: 8px; font-size: 13.5px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
     .kw { margin-top: 12px; }
-    .foot { margin-top: auto; padding-top: 12px; border-top: 1px solid #eef1f6; }
+    .foot { margin-top: auto; padding-top: 12px; border-top: 1px solid var(--border-soft); }
     .span-all { grid-column: 1 / -1; }
     .eyebrow { display: block; margin-bottom: 6px; color: var(--primary-2); font-size: 11.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
   `]

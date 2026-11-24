@@ -93,13 +93,13 @@ import { apiError, frDate, hhmm, today } from '../../core/labels';
   `,
   styles: [`
     .eyebrow { display: block; margin-bottom: 6px; color: var(--primary-2); font-size: 11.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
-    .pending { display: flex; gap: 10px; align-items: center; padding: 10px 0; border-bottom: 1px solid #eef1f6; }
+    .pending { display: flex; gap: 10px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border-soft); }
     .grow { flex: 1; min-width: 0; }
     .wide { width: min(680px, 100%); }
     .roll { max-height: 55vh; overflow-y: auto; margin-top: 8px; }
-    .roll-row { display: flex; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid #eef1f6; }
+    .roll-row { display: flex; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border-soft); }
     .seg { display: inline-flex; border: 1px solid var(--border); border-radius: 9px; overflow: hidden; }
-    .seg button { border: 0; background: #fff; padding: 6px 10px; font: 600 12.5px var(--font); cursor: pointer; color: var(--text-2); }
+    .seg button { border: 0; background: var(--surface); padding: 6px 10px; font: 600 12.5px var(--font); cursor: pointer; color: var(--text-2); }
     .seg button.on { background: var(--teal-soft); color: var(--teal); }
     .seg button.on-amber { background: var(--amber-soft); color: var(--amber); }
     .seg button.on-red { background: var(--red-soft); color: var(--red); }

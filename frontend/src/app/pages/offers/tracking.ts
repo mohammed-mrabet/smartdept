@@ -67,11 +67,11 @@ import { OfferApi, TRACKING, Tracking, TrackingStatus, companyColor, initials } 
     .dot.blue { background: var(--primary-2); } .dot.violet { background: var(--violet); } .dot.amber { background: #e0a100; }
     .dot.teal { background: var(--teal); } .dot.red { background: var(--red); }
     .board { display: grid; grid-template-columns: repeat(5, minmax(220px, 1fr)); gap: 12px; overflow-x: auto; padding-bottom: 8px; }
-    .col { background: #f1f4f9; border-radius: 14px; padding: 10px; min-height: 360px; border: 2px dashed transparent; transition: .15s; }
-    .col.over { border-color: var(--primary-2); background: #eaf0ff; }
+    .col { background: var(--surface-sunken); border-radius: 14px; padding: 10px; min-height: 360px; border: 2px dashed transparent; transition: .15s; }
+    .col.over { border-color: var(--primary-2); background: var(--highlight); }
     .col header { display: flex; gap: 8px; align-items: center; font-weight: 700; font-size: 13.5px; padding: 4px 4px 10px; }
     .col header em { margin-left: auto; font-style: normal; color: var(--muted); }
-    .tcard { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin-bottom: 10px; cursor: grab; display: grid; gap: 8px; }
+    .tcard { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin-bottom: 10px; cursor: grab; display: grid; gap: 8px; }
     .tcard:active { cursor: grabbing; }
     .tcard strong { font-size: 13.5px; display: block; line-height: 1.3; } .tcard small { color: var(--muted); font-size: 12px; }
     .avatar { width: 32px; height: 32px; border-radius: 9px; display: grid; place-items: center; color: #fff; font-weight: 800; font-size: 12px; flex: none; }
@@ -82,7 +82,7 @@ import { OfferApi, TRACKING, Tracking, TrackingStatus, companyColor, initials } 
     .mini { border: 1px solid var(--border); border-radius: 7px; font: 12px var(--font); padding: 2px 4px; }
     textarea { width: 100%; border: 1px solid var(--border); border-radius: 8px; padding: 6px 8px; font: 13px var(--font); }
     .danger { color: var(--red); margin-left: auto; }
-    .drop-hint { text-align: center; color: var(--muted); font-size: 12.5px; padding: 28px 8px; border: 1px dashed #cdd6e5; border-radius: 10px; }
+    .drop-hint { text-align: center; color: var(--muted); font-size: 12.5px; padding: 28px 8px; border: 1px dashed var(--border-strong); border-radius: 10px; }
   `]
 })
 export class OfferTracking implements OnInit {

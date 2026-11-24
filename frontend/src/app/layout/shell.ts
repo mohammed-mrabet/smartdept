@@ -1,3 +1,4 @@
+import { ThemeToggle } from '../shared/theme-toggle';
 import { Component, HostListener, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
@@ -47,7 +48,7 @@ const NAV: { title: string; items: NavItem[] }[] = [
 
 @Component({
   selector: 'app-shell',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, ChatWidget],
+  imports: [ThemeToggle, RouterOutlet, RouterLink, RouterLinkActive, ChatWidget],
   template: `
     <aside class="sidebar" [class.open]="menuOpen()">
       <a class="brand" routerLink="/tableau-de-bord">
@@ -74,6 +75,7 @@ const NAV: { title: string; items: NavItem[] }[] = [
         <button class="btn-link burger" (click)="menuOpen.set(true)" aria-label="Menu">☰</button>
         <div class="spacer"></div>
 
+        <app-theme-toggle />
         <div class="bell-wrap">
           <button class="bell" (click)="toggleBell($event)" aria-label="Notifications" [attr.aria-expanded]="bellOpen()">
             🔔 @if (center.unread() > 0) { <span class="dot">{{ center.unread() > 99 ? '99+' : center.unread() }}</span> }
@@ -130,20 +132,20 @@ const NAV: { title: string; items: NavItem[] }[] = [
     .count { margin-left: auto; background: #ef4444; color: #fff; border-radius: 999px; padding: 0 7px; font-size: 11.5px; font-weight: 700; }
     .sidebar-foot { padding: 16px 22px; color: #6f80a8; }
     .shell-main { margin-left: 256px; min-height: 100vh; }
-    .topbar { position: sticky; top: 0; z-index: 20; height: 64px; display: flex; align-items: center; gap: 14px; padding: 0 24px; background: rgba(255, 255, 255, .92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); }
+    .topbar { position: sticky; top: 0; z-index: 20; height: 64px; display: flex; align-items: center; gap: 14px; padding: 0 24px; background: var(--nav-bg); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); }
     .spacer { flex: 1; }
     .burger { display: none; font-size: 22px; color: var(--text); }
     .bell-wrap, .user-wrap { position: relative; }
-    .bell { position: relative; width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--border); background: #fff; cursor: pointer; font-size: 17px; }
+    .bell { position: relative; width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); cursor: pointer; font-size: 17px; }
     .dot { position: absolute; top: -6px; right: -6px; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 999px; background: #ef4444; color: #fff; font-size: 11px; font-weight: 700; display: grid; place-items: center; border: 2px solid #fff; }
     .user { display: flex; gap: 10px; align-items: center; border: 0; background: none; cursor: pointer; text-align: left; font: inherit; color: inherit; }
     .avatar { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: var(--primary-soft); color: var(--primary-2); font-weight: 800; }
     .who small { display: block; color: var(--muted); font-size: 12px; }
-    .dropdown { position: absolute; right: 0; top: 48px; width: 360px; max-height: 480px; overflow-y: auto; background: #fff; border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 16px 40px rgba(15, 23, 42, .16); }
+    .dropdown { position: absolute; right: 0; top: 48px; width: 360px; max-height: 480px; overflow-y: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 16px 40px rgba(15, 23, 42, .16); }
     .dd-head { padding: 12px 14px; border-bottom: 1px solid var(--border); }
-    .notif { display: flex; flex-direction: column; gap: 2px; width: 100%; text-align: left; padding: 11px 14px; border: 0; border-bottom: 1px solid #f0f2f7; background: #fff; cursor: pointer; font: inherit; color: inherit; }
+    .notif { display: flex; flex-direction: column; gap: 2px; width: 100%; text-align: left; padding: 11px 14px; border: 0; border-bottom: 1px solid var(--border-soft); background: var(--surface); cursor: pointer; font: inherit; color: inherit; }
     .notif:hover { background: var(--surface-2); }
-    .notif.unread { background: #f5f8ff; box-shadow: inset 3px 0 0 var(--primary-2); }
+    .notif.unread { background: var(--highlight); box-shadow: inset 3px 0 0 var(--primary-2); }
     .notif .t { font-weight: 650; font-size: 14px; }
     .notif .m { color: var(--text-2); font-size: 13px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
     .all { display: block; padding: 11px 14px; text-align: center; font-weight: 600; font-size: 13.5px; }

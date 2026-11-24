@@ -48,7 +48,7 @@ import { frDate, hhmm, today } from '../../core/labels';
   `,
   styles: [`
     .extras { margin-bottom: 18px; }
-    .line { display: flex; gap: 10px; align-items: center; padding: 9px 0; border-bottom: 1px solid #eef1f6; color: inherit; text-decoration: none !important; }
+    .line { display: flex; gap: 10px; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--border-soft); color: inherit; text-decoration: none !important; }
     .line:last-child { border-bottom: 0; }
     .line.cancel { opacity: .6; }
     .t { width: 44px; font-weight: 800; color: var(--primary-2); }

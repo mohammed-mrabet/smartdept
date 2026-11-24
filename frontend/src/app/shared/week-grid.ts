@@ -41,26 +41,26 @@ const END = 19 * 60;
     </div>
   `,
   styles: [`
-    .wg { display: grid; grid-template-columns: 52px repeat(6, minmax(120px, 1fr)); border: 1px solid var(--border); border-radius: 14px; background: #fff; overflow-x: auto; }
+    .wg { display: grid; grid-template-columns: 52px repeat(6, minmax(120px, 1fr)); border: 1px solid var(--border); border-radius: 14px; background: var(--surface); overflow-x: auto; }
     .hours { position: relative; border-right: 1px solid var(--border); }
     .corner { height: 44px; border-bottom: 1px solid var(--border); }
     .hour { position: absolute; right: 6px; font-size: 11px; color: var(--muted); transform: translateY(-7px); }
-    .day { border-right: 1px solid #eef1f6; min-width: 120px; } .day:last-child { border-right: 0; }
-    .day.today { background: #f7faff; }
+    .day { border-right: 1px solid var(--border-soft); min-width: 120px; } .day:last-child { border-right: 0; }
+    .day.today { background: var(--highlight); }
     .dhead { height: 44px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-bottom: 1px solid var(--border); font-size: 13px; }
     .day.today .dhead { color: var(--primary-2); }
     .dhead small { color: var(--muted); font-size: 11.5px; }
     .dbody { position: relative; cursor: default; }
-    .line { position: absolute; left: 0; right: 0; border-top: 1px dashed #eef1f6; }
+    .line { position: absolute; left: 0; right: 0; border-top: 1px dashed var(--border-soft); }
     .slot { position: absolute; padding: 5px 7px; border-radius: 8px; border: 0; border-left: 3px solid; text-align: left; font: 11.5px/1.3 var(--font);
       overflow: hidden; cursor: pointer; display: flex; flex-direction: column; gap: 1px; box-sizing: border-box; margin: 1px; }
     .slot strong { font-size: 12.5px; }
     .slot .t { font-weight: 700; opacity: .8; }
-    .slot.cm { background: #e8efff; border-color: #2563eb; color: #1e3a8a; }
-    .slot.td { background: #e2f6f2; border-color: #0f8a7a; color: #115e55; }
-    .slot.tp { background: #f1eaff; border-color: #6d3fc0; color: #4c2a8a; }
-    .slot.exam { background: #fff3df; border-color: #d97706; color: #7c4a03; }
-    .slot.cancelled { opacity: .55; text-decoration: line-through; background: #f3f4f6; border-color: #9ca3af; color: #4b5563; }
+    .slot.cm { background: var(--primary-soft); border-color: var(--primary-2); color: var(--alert-info); }
+    .slot.td { background: var(--teal-soft); border-color: var(--teal); color: var(--alert-success); }
+    .slot.tp { background: var(--violet-soft); border-color: var(--violet); color: var(--violet); }
+    .slot.exam { background: var(--amber-soft); border-color: var(--amber); color: var(--alert-warn); }
+    .slot.cancelled { opacity: .55; text-decoration: line-through; background: var(--gray-bg); border-color: var(--muted); color: var(--gray-text); }
     .muted { color: inherit; opacity: .7; }
   `]
 })

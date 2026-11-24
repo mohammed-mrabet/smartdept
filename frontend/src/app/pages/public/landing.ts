@@ -298,9 +298,9 @@ const TOPICS: { code: ContactTopic; label: string }[] = [
     </footer>
   `,
   styles: [`
-    :host { display: block; background: #fff; }
+    :host { display: block; background: var(--surface); }
     .btn-lg { padding: 13px 22px; font-size: 15px; border-radius: 11px; }
-    .btn-light { background: #fff; color: #0f1b3d; }
+    .btn-light { background: white; color: #0f1b3d; }
     .btn-light:hover { background: #e8efff; }
     .btn-outline { background: transparent; color: #fff; border-color: rgba(255,255,255,.35); }
     .btn-outline:hover { border-color: #fff; }
@@ -347,14 +347,14 @@ const TOPICS: { code: ContactTopic; label: string }[] = [
     .eyebrow { color: var(--primary-2); font-size: 12px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
 
     .services { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-    .svc { border: 1px solid var(--border); border-radius: 16px; padding: 22px; transition: transform .15s, box-shadow .15s, border-color .15s; background: #fff; }
-    .svc:hover { transform: translateY(-3px); box-shadow: 0 14px 34px rgba(16,24,40,.08); border-color: #c7d4f0; }
+    .svc { border: 1px solid var(--border); border-radius: 16px; padding: 22px; transition: transform .15s, box-shadow .15s, border-color .15s; background: var(--surface); }
+    .svc:hover { transform: translateY(-3px); box-shadow: 0 14px 34px rgba(16,24,40,.08); border-color: var(--border-strong); }
     .svc-ico { width: 46px; height: 46px; border-radius: 13px; display: grid; place-items: center; font-size: 22px; }
     .svc h3 { margin: 16px 0 8px; font-size: 16px; }
     .svc p { color: var(--text-2); font-size: 14px; line-height: 1.55; }
 
     .aud { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-    .aud-card { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 24px; }
+    .aud-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 24px; }
     .aud-top { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
     .aud-ico { font-size: 28px; }
     .aud-card h3 { font-size: 18px; }
@@ -363,7 +363,7 @@ const TOPICS: { code: ContactTopic; label: string }[] = [
     .aud-card li::before { content: "✓"; position: absolute; left: 0; color: var(--teal); font-weight: 800; }
 
     .offers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-    .offer { border: 1px solid var(--border); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 10px; background: #fff; }
+    .offer { border: 1px solid var(--border); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 10px; background: var(--surface); }
     .offer-top { display: flex; gap: 12px; align-items: center; }
     .avatar { width: 40px; height: 40px; border-radius: 10px; color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 14px; flex: none; }
     .offer-co { display: flex; flex-direction: column; min-width: 0; }
@@ -374,7 +374,7 @@ const TOPICS: { code: ContactTopic; label: string }[] = [
     .offer-foot { margin-top: auto; display: flex; gap: 4px; }
 
     .levels { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-    .level { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 22px; display: flex; flex-direction: column; gap: 2px; }
+    .level { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 22px; display: flex; flex-direction: column; gap: 2px; }
     .level-n { font-size: 26px; font-weight: 800; color: var(--primary); letter-spacing: -.02em; }
     .level strong { font-size: 30px; margin-top: 14px; font-variant-numeric: tabular-nums; }
 
@@ -390,7 +390,7 @@ const TOPICS: { code: ContactTopic; label: string }[] = [
 
     .faq-wrap { display: grid; grid-template-columns: .8fr 1.2fr; gap: 40px; align-items: start; }
     .faq { display: grid; gap: 10px; }
-    details { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 14px 18px; }
+    details { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 18px; }
     summary { cursor: pointer; font-weight: 700; list-style: none; display: flex; justify-content: space-between; gap: 12px; }
     summary::-webkit-details-marker { display: none; }
     summary::after { content: "+"; color: var(--primary-2); font-size: 20px; line-height: 1; }

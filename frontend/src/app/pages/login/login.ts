@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { PublicApi } from '../../core/public-api.service';
+import { ThemeToggle } from '../../shared/theme-toggle';
 import { AuthService } from '../../core/auth.service';
 import { apiError } from '../../core/labels';
 
@@ -14,7 +15,7 @@ const DEMO = [
 
 @Component({
   selector: 'app-login',
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, ThemeToggle],
   template: `
     <div class="wrap">
       <section class="hero">
@@ -29,6 +30,7 @@ const DEMO = [
       </section>
 
       <section class="panel">
+        <div class="panel-tools"><app-theme-toggle /></div>
         <form class="card" (ngSubmit)="submit()" #f="ngForm">
           <h2>Connexion</h2>
           <p class="muted">Utilisez votre adresse institutionnelle.</p>
@@ -73,7 +75,8 @@ const DEMO = [
     .hero h1 { color: #fff; font-size: 32px; max-width: 560px; }
     .hero ul { margin: 0; padding-left: 18px; display: grid; gap: 10px; max-width: 540px; }
     .hero small { color: #8ea0c8; }
-    .panel { display: grid; place-items: center; padding: 32px 18px; }
+    .panel { position: relative; display: grid; place-items: center; padding: 32px 18px; }
+    .panel-tools { position: absolute; top: 16px; right: 16px; }
     form { width: min(420px, 100%); padding: 30px; }
     .full { width: 100%; }
     .signup { margin-top: 16px; text-align: center; font-size: 14px; color: var(--text-2); }

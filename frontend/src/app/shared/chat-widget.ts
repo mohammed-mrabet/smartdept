@@ -48,14 +48,14 @@ interface Message { from: 'me' | 'bot'; text: string; source?: string; }
     .chat-fab { position: fixed; right: 22px; bottom: 22px; width: 56px; height: 56px; border-radius: 50%; border: 0; cursor: pointer; z-index: 40;
       color: #fff; font-size: 22px; background: linear-gradient(135deg, #6d3fc0, #2563eb); box-shadow: 0 10px 30px rgba(37, 99, 235, .35); }
     .chat-panel { position: fixed; right: 22px; bottom: 90px; width: min(390px, calc(100vw - 32px)); height: min(560px, calc(100vh - 120px)); z-index: 40;
-      background: #fff; border: 1px solid var(--border); border-radius: 16px; box-shadow: 0 20px 60px rgba(15, 23, 42, .2); display: flex; flex-direction: column; overflow: hidden; }
+      background: var(--surface); border: 1px solid var(--border); border-radius: 16px; box-shadow: 0 20px 60px rgba(15, 23, 42, .2); display: flex; flex-direction: column; overflow: hidden; }
     header { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; color: #fff; background: linear-gradient(135deg, #6d3fc0, #2563eb); }
     header small { display: block; opacity: .85; font-size: 12px; }
     .close { color: #fff; font-size: 16px; }
     .messages { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; background: var(--surface-2); }
     .msg { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; max-width: 88%; }
     .msg.me { align-self: flex-end; align-items: flex-end; }
-    .bubble { padding: 9px 12px; border-radius: 12px; background: #fff; border: 1px solid var(--border); font-size: 14px; }
+    .bubble { padding: 9px 12px; border-radius: 12px; background: var(--surface); border: 1px solid var(--border); font-size: 14px; }
     .msg.me .bubble { background: var(--primary-2); color: #fff; border-color: var(--primary-2); }
     .suggestions { padding: 8px 12px 0; border-top: 1px solid var(--border); }
     .suggestions .chip { border: 0; cursor: pointer; }

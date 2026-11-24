@@ -138,7 +138,17 @@ vidés après chaque synchronisation ou publication. Les compteurs de limitation
 Redis (`INCR` + `EXPIRE`), partagés entre plusieurs réplicas du backend. Si Redis tombe, l'application continue
 (le cache est ignoré, les compteurs repassent en mémoire). Sans Docker (XAMPP), `CACHE_TYPE=simple` par défaut.
 
-### 1.7 Notifications et IA
+### 1.7 Mode sombre
+
+Bouton ☀ / ☾ / ◐ dans la barre du haut, sur l'accueil et sur la connexion : thème clair, sombre ou celui du
+système. Le choix est mémorisé dans le navigateur et appliqué avant le chargement d'Angular (pas de flash blanc).
+Toutes les couleurs passent par des variables CSS (`styles.css`), redéfinies pour `[data-theme="dark"]`.
+
+| | |
+| --- | --- |
+| ![Offres en sombre](docs/captures/40-offres-sombre.png) | ![Emploi du temps en sombre](docs/captures/41-edt-sombre.png) |
+
+### 1.8 Notifications et IA
 
 Chaque événement crée une notification dans l'application (cloche, page dédiée) et un e-mail HTML envoyé
 après la validation de la transaction. L'assistant IA (Ollama, Groq ou Gemini) améliore les sujets,
@@ -162,7 +172,12 @@ dans le chatbot ; sans clé, un moteur local prend le relais.
 | `sara.benjelloun@etu.smartdept.ma` | Étudiante DEUST-MIP | Bac+2 |
 
 Les données de démonstration contiennent 5 filières, 20 utilisateurs, 7 salles, 17 modules, l'emploi du temps
-de la semaine en cours, des examens, des notes, des absences et 24 offres de démonstration (entreprises fictives).
+de la semaine en cours, des examens, des notes, des absences et 24 offres de démonstration (entreprises fictives,
+marquées « Démo » : on ne peut pas y postuler). Les **vraies offres** arrivent des API environ une minute après le
+démarrage du backend (première synchronisation automatique), puis toutes les 6 heures. Elles ont un bouton
+« Postuler sur le site ↗ » qui ouvre l'annonce d'origine. Sans aucune clé, Remotive, Jobicy et Arbeitnow
+(télétravail) fonctionnent ; les clés gratuites de `.env.example` ajoutent le Maroc, la France, le Canada, la
+Belgique et l'Espagne.
 
 ### Option A — Docker
 

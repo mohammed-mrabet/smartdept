@@ -88,10 +88,10 @@ import { apiError } from '../../core/labels';
     .bad { color: var(--red); }
     .mt-xs { margin-top: 6px; }
     .slim { width: auto; max-width: 420px; }
-    .seg { display: inline-flex; border: 1px solid var(--border); border-radius: 9px; overflow: hidden; background: #fff; }
+    .seg { display: inline-flex; border: 1px solid var(--border); border-radius: 9px; overflow: hidden; background: var(--surface); }
     .seg button { border: 0; background: none; padding: 8px 12px; font: 600 13px var(--font); cursor: pointer; color: var(--text-2); }
     .seg button.on { background: var(--primary-soft); color: var(--primary-2); }
-    th.cur, td.cur { background: #f5f8ff; }
+    th.cur, td.cur { background: var(--highlight); }
     .grade { width: 80px; padding: 5px 8px; border: 1px solid var(--border); border-radius: 7px; font: inherit; }
   `]
 })

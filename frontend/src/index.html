@@ -7,6 +7,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Plateforme intelligente du département informatique : PFE, notifications, assistant IA">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <script>
+    // Thème appliqué avant Angular pour éviter un flash blanc (voir core/theme.service.ts)
+    (function () {
+      var m = 'system';
+      try { m = localStorage.getItem('smartdept_theme') || 'system'; } catch (e) {}
+      var dark = m === 'dark' || (m === 'system' && window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches);
+      document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+    })();
+  </script>
+  <meta name="color-scheme" content="light dark">
 </head>
 <body>
   <app-root></app-root>

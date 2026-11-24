@@ -159,10 +159,10 @@ type Dialog = { kind: 'submit' | 'review'; milestone: Milestone } | { kind: 'add
     .layout { grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr); align-items: start; }
     .tl-item { scroll-margin-top: 90px; }
     .tl-item:target { animation: flash 2s; }
-    @keyframes flash { 0% { background: #fff6d6; } 100% { background: transparent; } }
+    @keyframes flash { 0% { background: var(--amber-soft); } 100% { background: transparent; } }
     .mt-xs { margin-top: 8px; }
     .deliv, .feedback { margin-top: 10px; padding: 10px 12px; border-radius: 9px; background: var(--surface-2); border: 1px solid var(--border); font-size: 13.5px; word-break: break-all; }
-    .feedback { background: var(--teal-soft); border-color: #c4eae2; word-break: normal; }
+    .feedback { background: var(--teal-soft); border-color: var(--border-strong); word-break: normal; }
     .people { list-style: none; padding: 0; margin: 12px 0; display: grid; gap: 12px; }
     .people li { display: flex; gap: 10px; align-items: center; }
     .av { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--primary-soft); color: var(--primary-2); font-weight: 800; flex: none; }

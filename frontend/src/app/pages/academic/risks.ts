@@ -68,11 +68,11 @@ import { apiError } from '../../core/labels';
   styles: [`
     .eyebrow { display: block; margin-bottom: 6px; color: var(--violet); font-size: 11.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
     .slim { width: auto; }
-    .seg { display: inline-flex; border: 1px solid var(--border); border-radius: 9px; overflow: hidden; background: #fff; }
+    .seg { display: inline-flex; border: 1px solid var(--border); border-radius: 9px; overflow: hidden; background: var(--surface); }
     .seg button { border: 0; background: none; padding: 8px 12px; font: 600 13px var(--font); cursor: pointer; color: var(--text-2); }
     .seg button.on { background: var(--primary-soft); color: var(--primary-2); }
     .score { display: flex; gap: 8px; align-items: center; margin-bottom: 4px; }
-    .bar { flex: 1; height: 8px; background: #eef2f8; border-radius: 99px; overflow: hidden; }
+    .bar { flex: 1; height: 8px; background: var(--track); border-radius: 99px; overflow: hidden; }
     .bar i { display: block; height: 100%; } .bar i.high { background: var(--red); } .bar i.medium { background: #e0a100; } .bar i.low { background: var(--teal); }
     .bad { color: var(--red); font-weight: 700; }
     .rel { margin-left: 10px; }

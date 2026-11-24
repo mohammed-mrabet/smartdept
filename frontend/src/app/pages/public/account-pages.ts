@@ -25,7 +25,7 @@ const SHARED_STYLES = `
   form.card, .card.box { padding: 28px; }
   .full { width: 100%; }
   .meter { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-top: 6px; }
-  .meter i { height: 5px; border-radius: 9px; background: #e5e9f1; }
+  .meter i { height: 5px; border-radius: 9px; background: var(--track); }
   .meter i.on.s1 { background: var(--red); } .meter i.on.s2 { background: var(--amber); }
   .meter i.on.s3 { background: var(--primary-2); } .meter i.on.s4 { background: var(--teal); }
   .pw { position: relative; }

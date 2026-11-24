@@ -79,13 +79,13 @@ const EMAIL: Record<string, string> = { SENT: '✉ envoyé par e-mail', FAILED: 
   `,
   styles: [`
     .eyebrow { display: block; margin-bottom: 6px; color: var(--primary-2); font-size: 11.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
-    .seg { display: inline-flex; border: 1px solid var(--border); border-radius: 9px; overflow: hidden; background: #fff; }
+    .seg { display: inline-flex; border: 1px solid var(--border); border-radius: 9px; overflow: hidden; background: var(--surface); }
     .seg button { border: 0; background: none; padding: 8px 14px; font: 600 13.5px var(--font); cursor: pointer; color: var(--text-2); }
     .seg button.on { background: var(--primary-soft); color: var(--primary-2); }
     .list { padding: 0; overflow: hidden; }
-    .item { display: flex; gap: 14px; padding: 16px 18px; border-bottom: 1px solid #eef1f6; }
+    .item { display: flex; gap: 14px; padding: 16px 18px; border-bottom: 1px solid var(--border-soft); }
     .item:last-child { border-bottom: 0; }
-    .item.unread { background: #f6f9ff; box-shadow: inset 3px 0 0 var(--primary-2); }
+    .item.unread { background: var(--highlight); box-shadow: inset 3px 0 0 var(--primary-2); }
     .item .grow { flex: 1; min-width: 0; cursor: pointer; }
     .item p { margin-top: 3px; font-size: 14px; }
     .ico { width: 38px; height: 38px; border-radius: 10px; background: var(--surface-2); display: grid; place-items: center; flex: none; font-size: 17px; }
