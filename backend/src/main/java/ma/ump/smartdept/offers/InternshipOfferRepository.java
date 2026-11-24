@@ -66,6 +66,8 @@ public interface InternshipOfferRepository extends JpaRepository<InternshipOffer
 
     List<InternshipOffer> findTop300ByActiveTrueOrderByPublishedAtDesc();
 
+    List<InternshipOffer> findByActiveTrueAndSourceNot(OfferSource source);
+
     List<InternshipOffer> findByPostedByIdOrderByCreatedAtDesc(Long userId);
 
     /** Offres externes non revues depuis la date donnée : retirées de la recherche. */

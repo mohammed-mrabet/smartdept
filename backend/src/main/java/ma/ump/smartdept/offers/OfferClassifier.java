@@ -27,6 +27,9 @@ public final class OfferClassifier {
     private static final Pattern STAGE = Pattern.compile(
             "\\bstages?\\b|stagiaire|intern(ship)?s?\\b|trainee|pr[áa]cticas|becari[oa]|praktikum|werkstudent|co.?op\\b|placement");
 
+    private static final Pattern STAGE_IN_TEXT = Pattern.compile(
+            "stage (de|d.une duree de) \\d|\\bstagiaire\\b|internship|pr[aa]cticas (de|en)|\\bpraktikum\\b|werkstudent");
+
     /** Niveau → motifs qui le signalent. L'ordre compte : "bac+5" doit être testé avant "bac+2" pour "bac+2 à bac+5". */
     private static final Map<Integer, Pattern> LEVELS = new LinkedHashMap<>();
 
@@ -70,6 +73,66 @@ public final class OfferClassifier {
         for (String[] p : pairs) SKILLS.put(p[0], p[1]);
     }
 
+    // ---------- domaine informatique (dev, IA, data, DevOps, cloud, cybersécurité, réseaux, IT) ----------
+    /** Métiers de l'informatique dans le titre (FR, EN, ES), texte déjà sans accents et en minuscules. */
+    private static final Pattern IT_TITLE = Pattern.compile("\\b("
+            + "informatique|informatica|informatico|informatik|it|tic|ti|transformation numerique|"
+            + "developp\\w*|developer|developpeur|desarrollador\\w*|entwickler\\w*|softwareentwickl\\w*|programm\\w*|programador\\w*|coder|codeur|"
+            + "software|logiciel\\w*|web|full.?stack|back.?end|front.?end|android|ios|apps?|developpement d.applications?|"
+            + "data|donnees|datos|bi|business intelligence|analytics|big data|"
+            + "ia|ai|intelligence artificielle|inteligencia artificial|machine learning|deep learning|ml|mlops|llm|nlp|computer vision|vision par ordinateur|"
+            + "devops|devsecops|sre|cloud|kubernetes|docker|"
+            + "cyber\\w*|securite informatique|security|seguridad|soc|pentest\\w*|"
+            + "reseaux? informatiques?|reseaux? et (systemes|telecom\\w*)|systemes? et reseaux?|systemes? d.information|network\\w*|redes|telecom\\w*|ingenieur systemes?|(technicien|ingenieur|stage|stagiaire|alternance|alternant) (en )?reseaux?|administrat\\w* (serveurs?|systemes?|reseaux?)|linux|unix|systems? (engineer|administrator|analyst)|sistemas|sysadmin|infrastructure|"
+            + "support informatique|helpdesk|help desk|technicien informatique|"
+            + "qa|testeur|tester|test automation|automatisation des tests|"
+            + "erp|sap|crm|salesforce|odoo|"
+            + "ux|ui|product owner|scrum master|"
+            + "java|python|php|javascript|typescript|angular|react|vue|node|spring|laravel|symfony|\\.net|c#|c\\+\\+|golang|kotlin|flutter|sql"
+            + ")\\b");
+    /** Métiers clairement hors informatique : rejetés sauf si le titre contient aussi un métier informatique précis. */
+    private static final Pattern NON_IT_TITLE = Pattern.compile("\\b("
+            + "commercial\\w*|vente|vendeur\\w*|sales|vertrieb\\w*|account manager|business developer|comptab\\w*|accountant|accounting|buchhaltung|contable|audit\\w*|finance|controlling|einkauf|achats?|juridique|juriste|legal|"
+            + "ressources humaines|rh|hr|human resources|recrutement|recruit\\w*|talent|culture|personal\\w*|marketing|communications?|infirmier\\w*|aide.soignant|medical|pharmac\\w*|"
+            + "chauffeur|livreur|logisti\\w*|intralogisti\\w*|supply chain|magasinier|lager\\w*|electrical|electrique|elektro\\w*|mechanical|mecanique|maschinenbau|hydrogen|instrumentation|technical documentation|technische dokumentation|learning media|cariste|caissier\\w*|serveuse|serveur en restauration|cuisinier|boulanger|electricien|"
+            + "plombier|macon|soudeur|mecanicien|agent d.entretien|nettoyage|btp|batiment|immobilier|assureur|courtier|"
+            + "reseaux sociaux|community manager|enseignant|professeur|animateur|esthetic\\w*|coiffeu\\w*|agricole"
+            + ")\\b");
+    /** Compétences qui ne suffisent pas à classer une offre en informatique. */
+    private static final java.util.Set<String> GENERIC_SKILLS = java.util.Set.of("Excel", "Agile", "Scrum", "Data", "API REST",
+            "Tests", "SAP", "Salesforce", "Sécurité", "Réseaux", "Figma", "UML", "Cloud");
+
+    /** Métier technique sans ambiguïté : garde l'offre même si le titre cite aussi un autre domaine (« Data Engineer Finance »). */
+    private static final Pattern DEV_ROLE = Pattern.compile("\\b("
+            + "developp\\w*|developer|desarrollador\\w*|entwickler\\w*|software engineer\\w*|ingenieur (logiciel|informatique|data|devops|cloud|systemes?|reseaux?)|"
+            + "data (scientist|engineer|analyst)|machine learning|devops|sre|sysadmin|administrat\\w* (systemes?|reseaux?)|cyber\\w*|pentest\\w*"
+            + ")\\b");
+    /** Postes confirmés : SmartDept vise les stages, PFE, alternances et premiers emplois. */
+    private static final Pattern SENIOR = Pattern.compile("\\b("
+            + "senior|sr|lead|tech lead|team lead|head of|director|directeur|directrice|principal|staff engineer|architecte? senior|"
+            + "manager|managerin|leiter\\w*|responsable d.equipe|vp|cto|cio|"
+            + "(5|6|7|8|9|10)\\+? (ans|years|anos|jahre)"
+            + ")\\b");
+
+    /**
+     * Vrai si l'offre relève de l'informatique et convient à un étudiant ou un jeune diplômé.
+     * <ul>
+     *   <li>poste confirmé dans le titre (senior, lead, head of, manager…) → rejeté ;</li>
+     *   <li>titre d'un autre métier (vente, comptabilité, RH, logistique, électrotechnique…) → rejeté,
+     *       sauf métier technique explicite (développeur, data engineer, DevOps…) ;</li>
+     *   <li>titre informatique (dev, IA, data, DevOps, cloud, cybersécurité, réseaux, IT) → accepté ;</li>
+     *   <li>titre générique (« Stagiaire PFE ») → accepté si la description cite au moins 3 technologies précises.</li>
+     * </ul>
+     */
+    public static boolean isComputing(String title, String description) {
+        String t = " " + lower(plainText(title)).replaceAll("[^a-z0-9+#. ]", " ") + " ";
+        if (SENIOR.matcher(t).find()) return false;
+        if (NON_IT_TITLE.matcher(t).find()) return DEV_ROLE.matcher(t).find();
+        if (IT_TITLE.matcher(t).find()) return true;
+        long tech = skills(title + " " + plainText(description), 30).stream().filter(sk -> !GENERIC_SKILLS.contains(sk)).count();
+        return tech >= 3;
+    }
+
     public static String lower(String text) {
         return text == null ? "" : TextAnalyzer.normalize(text).toLowerCase(Locale.ROOT);
     }
@@ -81,8 +144,9 @@ public final class OfferClassifier {
         if (PFE.matcher(all).find()) return OfferKind.PFE;
         if (ALTERNANCE.matcher(t + " " + lower(hint)).find()) return OfferKind.ALTERNANCE;
         if (STAGE.matcher(t + " " + lower(hint)).find()) return OfferKind.STAGE;
+        // la description ne compte que si elle parle explicitement d'un stage (évite « placement », « co-op »… dans un texte d'emploi)
         if (ALTERNANCE.matcher(all).find()) return OfferKind.ALTERNANCE;
-        if (STAGE.matcher(all).find()) return OfferKind.STAGE;
+        if (STAGE_IN_TEXT.matcher(lower(description)).find()) return OfferKind.STAGE;
         return OfferKind.EMPLOI;
     }
 

@@ -62,6 +62,15 @@ Ce que fait SmartDept avec ces offres :
 
 Les offres externes restent liées à leur source d'origine (lien, nom de la source), comme le demandent les conditions des API.
 
+**Filtre « informatique » et offres valides.** Avant d'être enregistrée, chaque offre reçue d'une API doit :
+avoir un identifiant, un titre et un lien `http(s)` ; être publiée depuis moins de 45 jours ; relever de
+l'informatique (développement, IA, data, DevOps, cloud, cybersécurité, réseaux, support IT…), d'après le titre
+en français, anglais, espagnol ou allemand, ou, pour un titre générique, au moins 3 technologies dans la
+description ; et ne pas viser un profil confirmé (senior, lead, head of, manager…). Les offres de vente,
+comptabilité, RH, marketing, logistique, électrotechnique… sont écartées. Le nombre d'offres écartées est
+indiqué pour chaque synchronisation dans **Sources et marché**, et les offres déjà en base sont refiltrées au
+démarrage.
+
 ### 1.2 Scolarité (étape 2)
 
 - **Emploi du temps** par filière, enseignant ou salle, ou « le mien » ; création en série hebdomadaire ;

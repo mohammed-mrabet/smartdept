@@ -141,7 +141,7 @@ public class OfferSyncService {
                     "Ignoré : dernier appel il y a moins de " + p.minIntervalMinutes() + " min (conditions de l'API)", 0);
         }
         lastCall.put(p.source(), start);
-        int fetched = 0, created = 0, updated = 0;
+        int fetched = 0, created = 0, updated = 0, rejected = 0;
         List<String> errors = new ArrayList<>();
         for (OfferQuery q : queries) {
             try {
@@ -150,6 +150,7 @@ public class OfferSyncService {
                 OfferStore.UpsertResult res = store.upsert(p.source(), list, LocalDateTime.now(clock));
                 created += res.createdIds().size();
                 updated += res.updated();
+                rejected += res.rejected();
                 createdIds.addAll(res.createdIds());
             } catch (Exception e) {
                 String msg = q.country() + "/" + q.kind() + " : " + e.getClass().getSimpleName()
@@ -165,7 +166,8 @@ public class OfferSyncService {
         Counter.builder("smartdept.offers.fetched").tag("source", src).description("Offres reçues des API").register(metrics).increment(fetched);
         Counter.builder("smartdept.offers.created").tag("source", src).description("Nouvelles offres enregistrées").register(metrics).increment(created);
         Counter.builder("smartdept.offers.errors").tag("source", src).description("Requêtes d'API en échec").register(metrics).increment(errors.size());
-        String message = errors.isEmpty() ? queries.size() + " requête(s)" : String.join(" | ", errors);
+        String filtered = rejected > 0 ? ", " + rejected + " écartée(s) (hors informatique, périmées ou sans lien)" : "";
+        String message = (errors.isEmpty() ? queries.size() + " requête(s)" : String.join(" | ", errors)) + filtered;
         OfferSyncRun run = new OfferSyncRun();
         run.setSource(p.source());
         run.setStartedAt(LocalDateTime.ofInstant(start, clock.getZone()));
@@ -185,5 +187,23 @@ public class OfferSyncService {
     public void cleanup() {
         offerRepository.deactivateStale(LocalDateTime.now(clock).minusDays(retentionDays));
         offerRepository.deactivateExpired(LocalDate.now(clock));
+        deactivateOutOfScope();
+    }
+
+    /** Retire les offres d'API déjà enregistrées qui ne relèvent pas de l'informatique (règles plus strictes depuis l'étape 4). */
+    public int deactivateOutOfScope() {
+        int n = 0;
+        for (InternshipOffer o : offerRepository.findByActiveTrueAndSourceNot(OfferSource.INTERNAL)) {
+            if (!OfferClassifier.isComputing(o.getTitle(), o.getDescription())) {
+                o.setActive(false);
+                offerRepository.save(o);
+                n++;
+            }
+        }
+        if (n > 0) {
+            log.info("{} offre(s) hors informatique ou pour profils confirmés retirée(s)", n);
+            if (cacheManager != null) ma.ump.smartdept.config.CacheConfig.evictOffers(cacheManager);
+        }
+        return n;
     }
 }

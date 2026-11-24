@@ -38,6 +38,11 @@ public class OfferStartupSync {
     @EventListener(ApplicationReadyEvent.class)
     public void onReady() {
         if (!enabled) return;
+        try {
+            syncService.deactivateOutOfScope();   // offres déjà en base : même filtre « informatique » que les nouvelles
+        } catch (RuntimeException e) {
+            log.warn("Nettoyage des offres hors informatique impossible : {}", e.getMessage());
+        }
         if (recentlySynced()) {
             log.info("Synchronisation des offres au démarrage ignorée : dernière synchronisation il y a moins de 6 heures");
             return;

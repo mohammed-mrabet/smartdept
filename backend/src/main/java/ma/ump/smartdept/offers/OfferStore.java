@@ -18,7 +18,11 @@ import java.util.stream.Collectors;
 @Service
 public class OfferStore {
 
-    public record UpsertResult(List<Long> createdIds, int updated) {
+    /** rejected : offres écartées (hors informatique, sans lien valide, trop anciennes). */
+    public record UpsertResult(List<Long> createdIds, int updated, int rejected) {
+        public UpsertResult(List<Long> createdIds, int updated) {
+            this(createdIds, updated, 0);
+        }
     }
 
     private final InternshipOfferRepository repository;
@@ -30,9 +34,10 @@ public class OfferStore {
     @Transactional
     public UpsertResult upsert(OfferSource source, List<FetchedOffer> fetched, LocalDateTime now) {
         List<FetchedOffer> valid = fetched.stream()
-                .filter(f -> f.externalId() != null && f.title() != null && f.url() != null)
+                .filter(f -> isValid(f, now))
                 .collect(Collectors.toMap(FetchedOffer::externalId, Function.identity(), (a, b) -> a))
                 .values().stream().toList();
+        int rejected = fetched.size() - valid.size();
         Set<String> ids = valid.stream().map(FetchedOffer::externalId).collect(Collectors.toSet());
         Map<String, InternshipOffer> existing = ids.isEmpty() ? Map.of()
                 : repository.findBySourceAndExternalIdIn(source, ids).stream()
@@ -52,7 +57,25 @@ public class OfferStore {
             apply(offer, f, now);
             repository.save(offer);
         }
-        return new UpsertResult(created.stream().map(InternshipOffer::getId).filter(Objects::nonNull).toList(), updated);
+        return new UpsertResult(created.stream().map(InternshipOffer::getId).filter(Objects::nonNull).toList(), updated, rejected);
+    }
+
+    /** Délai au-delà duquel une offre publiée est jugée périmée (même valeur que la conservation des offres). */
+    static final int MAX_AGE_DAYS = 45;
+
+    /**
+     * Offre valide : identifiant, titre et lien http(s) présents, publiée il y a moins de 45 jours (et pas dans le futur),
+     * et du domaine informatique (dev, IA, data, DevOps, cloud, cybersécurité, réseaux, IT).
+     */
+    static boolean isValid(FetchedOffer f, LocalDateTime now) {
+        if (f.externalId() == null || f.externalId().isBlank()) return false;
+        if (f.title() == null || OfferClassifier.plainText(f.title()).trim().length() < 4) return false;
+        if (f.url() == null || !f.url().trim().toLowerCase(java.util.Locale.ROOT).matches("https?://\\S+")) return false;
+        if (f.publishedAt() != null) {
+            java.time.LocalDate today = now.toLocalDate();
+            if (f.publishedAt().isBefore(today.minusDays(MAX_AGE_DAYS)) || f.publishedAt().isAfter(today.plusDays(2))) return false;
+        }
+        return OfferClassifier.isComputing(f.title(), f.description());
     }
 
     /** Copie les champs et déduit type, niveaux, compétences, durée et télétravail. */
