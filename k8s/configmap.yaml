@@ -24,6 +24,6 @@ data:
   CORS_ORIGINS: "http://smartdept.local"
   AI_ENABLED: "false"
   AI_BASE_URL: "https://api.groq.com/openai/v1"
-  AI_MODEL: "llama-3.1-8b-instant"
+  AI_MODEL: "openai/gpt-oss-20b"
   # Journaux JSON (format ECS) pour Elasticsearch / Kibana
   LOGGING_STRUCTURED_FORMAT_CONSOLE: "ecs"

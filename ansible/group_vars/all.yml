@@ -15,7 +15,7 @@ smtp_username: ""
 smtp_password: "{{ vault_smtp_password | default('') }}"
 ai_enabled: false
 ai_base_url: "https://api.groq.com/openai/v1"
-ai_model: "llama-3.1-8b-instant"
+ai_model: "openai/gpt-oss-20b"
 ai_api_key: "{{ vault_ai_api_key | default('') }}"
 offers_keys:
   ADZUNA_APP_ID: "{{ vault_adzuna_app_id | default('') }}"

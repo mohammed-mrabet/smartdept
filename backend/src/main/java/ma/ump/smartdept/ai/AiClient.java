@@ -72,13 +72,20 @@ public class AiClient {
         if (!enabled) {
             return Optional.empty();
         }
-        Map<String, Object> body = Map.of(
-                "model", model,
-                "temperature", 0.3,
-                "max_tokens", 900,
-                "messages", List.of(
-                        Map.of("role", "system", "content", system),
-                        Map.of("role", "user", "content", user)));
+        Map<String, Object> body = new java.util.LinkedHashMap<>();
+        body.put("model", model);
+        body.put("temperature", 0.3);
+        body.put("messages", List.of(
+                Map.of("role", "system", "content", system),
+                Map.of("role", "user", "content", user)));
+        if (isReasoningModel(model)) {
+            // gpt-oss (Groq) « réfléchit » avant de répondre et ces jetons comptent dans max_tokens :
+            // réflexion courte + marge, sinon la réponse peut arriver vide
+            body.put("reasoning_effort", "low");
+            body.put("max_tokens", 2000);
+        } else {
+            body.put("max_tokens", 900);
+        }
         try {
             Map<String, Object> response = rest.post().uri("/chat/completions").body(body).retrieve().body(Map.class);
             if (response == null) {
@@ -96,5 +103,10 @@ public class AiClient {
             log.warn("Appel IA impossible ({}) : bascule sur le moteur local. Cause : {}", provider(), e.getMessage());
             return Optional.empty();
         }
+    }
+
+    /** Modèles à raisonnement (gpt-oss sur Groq) : acceptent reasoning_effort. */
+    static boolean isReasoningModel(String model) {
+        return model != null && model.toLowerCase(java.util.Locale.ROOT).contains("gpt-oss");
     }
 }
